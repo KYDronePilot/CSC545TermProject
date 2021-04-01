@@ -1,0 +1,10 @@
+{
+    "[java]": {
+        "editor.defaultFormatter": "mwpb.java-prettier-formatter",
+        "editor.formatOnSave": true,
+        "editor.rulers": [100]
+    },
+    "cSpell.words": [
+        "Dotenv"
+    ]
+}
