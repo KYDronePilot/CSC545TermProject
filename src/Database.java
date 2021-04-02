@@ -73,22 +73,70 @@ public class Database implements AutoCloseable {
     }
 
     /**
-     * Run a SQL select query.
+     * Run a parametrized SQL select query.
      *
      * @param sql query string
-     * @param applyToRow lambda function to run for each returned row
+     * @param applyToRow lambda function to run on each returned row
+     * @param setValues lambda function to bind parameters to prepared statement
      * @throws SQLException if there's an error running the query
      */
-    public void select(String sql, ThrowingConsumer<ResultSet, SQLException> applyToRow)
+    public void select(
+        String sql,
+        ThrowingConsumer<ResultSet, SQLException> applyToRow,
+        ThrowingConsumer<PreparedStatement, SQLException> setValues
+    )
         throws SQLException {
-        // Create a statement and execute the query
-        try (var stmt = conn.createStatement()) {
-            try (var rs = stmt.executeQuery(sql)) {
-                // For each result, call the `applyToRow` lambda, passing a ResultSet instance
+        // Create a statement
+        try (var stmt = conn.prepareStatement(sql)) {
+            // Bind any statement parameters
+            setValues.accept(stmt);
+            // Run the query
+            try (var rs = stmt.executeQuery()) {
+                // For each result, call the `applyToRow` lambda, passing the row's ResultSet
                 while (rs.next()) {
                     applyToRow.accept(rs);
                 }
             }
         }
+    }
+
+    /**
+     * Run a non-parametrized SQL select query.
+     *
+     * @param sql query string
+     * @param applyToRow lambda function to run on each returned row
+     * @throws SQLException if there's an error running the query
+     */
+    public void select(String sql, ThrowingConsumer<ResultSet, SQLException> applyToRow)
+        throws SQLException {
+        select(sql, applyToRow, stmt -> {});
+    }
+
+    /**
+     * Run a parametrized SQL modifying query (e.g. one that doesn't return anything).
+     *
+     * @param sql modifying query string
+     * @param setValues lambda function to bind parameters to prepared statement
+     * @throws SQLException if there's an error running the query
+     */
+    public void modify(String sql, ThrowingConsumer<PreparedStatement, SQLException> setValues)
+        throws SQLException {
+        // Create a statement
+        try (var stmt = conn.prepareStatement(sql)) {
+            // Bind any parameters
+            setValues.accept(stmt);
+            // Execute it
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Run a non-parametrized SQL modifying query (e.g. one that doesn't return anything).
+     *
+     * @param sql modifying query string
+     * @throws SQLException if there's an error running the query
+     */
+    public void modify(String sql) throws SQLException {
+        modify(sql, stmt -> {});
     }
 }
