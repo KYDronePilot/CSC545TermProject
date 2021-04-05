@@ -10,31 +10,32 @@ create table NutritionFacts (
 
 create table FoodItem (
     id number generated always as identity primary key,
-    name varchar2(50),
-    nutritionFactsId number,
-    foodGroup varchar2(30),
-    constraint nutritionFactsFk foreign key (nutritionFactsId) references NutritionFacts(id) on delete cascade
+    name varchar2(50) not null,
+    nutritionFactsId number null,
+    foodGroup varchar2(30) null,
+    constraint nutritionFactsFk foreign key (nutritionFactsId) references NutritionFacts(id) on delete set null
 );
 
 create table Recipe (
     id number generated always as identity primary key,
-    name varchar2(100),
-    instructions clob,
-    category varchar2(60)
+    name varchar2(100) not null,
+    instructions clob null,
+    category varchar2(60) null
 );
 
 create table RecipeFoodItem (
     recipeId number,
     foodItemId number,
+    primary key (recipeId, foodItemId),
     constraint recipeFk foreign key (recipeId) references Recipe(id) on delete cascade,
     constraint foodItemFk foreign key (foodItemId) references FoodItem(id) on delete cascade
 );
 
 create table DayMealPlan (
     id number generated always as identity primary key,
-    breakfastRecipeId number,
-    lunchRecipeId number,
-    dinnerRecipeId number,
+    breakfastRecipeId number null,
+    lunchRecipeId number null,
+    dinnerRecipeId number null,
     constraint breakfastRecipeFk foreign key (breakfastRecipeId) references Recipe(id) on delete set null,
     constraint lunchRecipeFk foreign key (lunchRecipeId) references Recipe(id) on delete set null,
     constraint dinnerRecipeFk foreign key (dinnerRecipeId) references Recipe(id) on delete set null
@@ -42,13 +43,13 @@ create table DayMealPlan (
 
 create table WeekMealPlan (
     id number generated always as identity primary key,
-    mondayRecipeId number,
-    tuesdayRecipeId number,
-    wednesdayRecipeId number,
-    thursdayRecipeId number,
-    fridayRecipeId number,
-    saturdayRecipeId number,
-    sundayRecipeId number,
+    mondayRecipeId number null,
+    tuesdayRecipeId number null,
+    wednesdayRecipeId number null,
+    thursdayRecipeId number null,
+    fridayRecipeId number null,
+    saturdayRecipeId number null,
+    sundayRecipeId number null,
     constraint mondayRecipeFk foreign key (mondayRecipeId) references Recipe(id) on delete set null,
     constraint tuesdayRecipeFk foreign key (tuesdayRecipeId) references Recipe(id) on delete set null,
     constraint wednesdayRecipeFk foreign key (wednesdayRecipeId) references Recipe(id) on delete set null,
