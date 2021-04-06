@@ -1,5 +1,9 @@
+package database;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Database interaction wrapper.
@@ -138,5 +142,96 @@ public class Database implements AutoCloseable {
      */
     public void modify(String sql) throws SQLException {
         modify(sql, stmt -> {});
+    }
+
+    /**
+     * Insert a row into a table.
+     *
+     * Reference: how to get back auto-generated ID of row: https://stackoverflow.com/a/56236430/11354266
+     * - Also: https://stackoverflow.com/a/1915197/11354266
+     *
+     * @param tableName name of the table
+     * @param columns column names provided when inserting
+     * @param setValues lambda to bind column values to query
+     * @param getGeneratedKey should fetch id of newly generated row
+     * @return id of new row if `getGeneratedKey == true`
+     * @throws SQLException if error executing SQL
+     */
+    public Optional<Integer> insert(
+        String tableName,
+        String[] columns,
+        ThrowingConsumer<PreparedStatement, SQLException> setValues,
+        boolean getGeneratedKey
+    )
+        throws SQLException {
+        // Generate placeholders for `VALUES` section of query
+        var placeholders = new String[columns.length];
+        Arrays.fill(placeholders, "?");
+        // Generate insert statement
+        try (
+            var stmt = conn.prepareStatement(
+                String.format(
+                    "insert into %s (%s) values (%s)",
+                    tableName,
+                    String.join(",", columns),
+                    String.join(",", placeholders)
+                ),
+                // If should return id, specify that it should be returned
+                getGeneratedKey ? new String[] { "id" } : new String[] {}
+            )
+        ) {
+            // Bind column values
+            setValues.accept(stmt);
+            // Execute insert
+            stmt.executeUpdate();
+            // Try to get the auto generated key if needed
+            if (getGeneratedKey) {
+                var rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    return Optional.of(rs.getInt(1));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Update the values of a table entry based on its id.
+     *
+     * @param tableName name of the table
+     * @param columns column names to update
+     * @param id id of the row to update
+     * @param setValues lambda to bind column values to query
+     * @throws SQLException if error executing SQL
+     */
+    public void update(
+        String tableName,
+        String[] columns,
+        int id,
+        ThrowingConsumer<PreparedStatement, SQLException> setValues
+    )
+        throws SQLException {
+        // Generate array of the update command's `SET` parameters
+        var updateAttrs = new String[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            updateAttrs[i] = columns[i] + " = ?";
+        }
+        // Create update statement
+        try (
+            var stmt = conn.prepareStatement(
+                String.format(
+                    "update %s set %s where id = ?",
+                    tableName,
+                    String.join(",", updateAttrs)
+                )
+            )
+        ) {
+            // Bind id param
+            stmt.setInt(columns.length + 1, id);
+            // Bind column values
+            setValues.accept(stmt);
+            // Execute update
+            stmt.executeUpdate();
+        }
     }
 }

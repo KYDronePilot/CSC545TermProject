@@ -1,3 +1,5 @@
+package database;
+
 /**
  * Based on `java.util.function.Consumer`, but allows functions to throw.
  *
