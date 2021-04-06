@@ -15,8 +15,9 @@ public class App {
             }
         );
         var item = items.get(0);
-        item.calories = 100;
-        item.update();
+        item.delete();
+        // item.calories = 100;
+        // item.update();
         // for (var item : items) {
         //     System.out.println(item.id);
         // }

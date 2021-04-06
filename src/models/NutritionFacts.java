@@ -96,4 +96,8 @@ public class NutritionFacts {
             }
         );
     }
+
+    public void delete() throws SQLException {
+        ModelHelper.delete(id, "NutritionFacts");
+    }
 }

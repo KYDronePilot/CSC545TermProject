@@ -91,4 +91,22 @@ public class ModelHelper {
         );
         return results;
     }
+
+    /**
+     * Helper for deleting a table entry by id.
+     *
+     * @param id id of the entry
+     * @param tableName name of the table to delete from
+     * @throws SQLException if error executing SQL
+     */
+    public static void delete(Integer id, String tableName) throws SQLException {
+        var db = Database.getInstance();
+        // Run query
+        db.modify(
+            String.format("delete from %s where id = ?", tableName),
+            stmt -> {
+                stmt.setInt(1, id);
+            }
+        );
+    }
 }
