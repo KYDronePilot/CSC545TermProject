@@ -14,15 +14,16 @@ fontsize: 12pt
 indent: false
 header-includes:
   - \newcommand{\ra}{\rightarrow}
+  - \usepackage{setspace}
+  - \doublespacing
 ---
 
 \maketitle
 \thispagestyle{empty}
 \clearpage
 
-This document sets forth a description of the problem being solved by the
-program being written and assumptions made about how the solution will be
-implemented.
+This document details the specifics of how the term project program will
+function and the problems it will solve.
 
 ## Problem Statement
 
@@ -34,7 +35,7 @@ ingredients, and search for recipes.
 
 ## Requirements
 
-The following are key functionalities that the program will implement.
+The following are key functionalities that the program will implement:
 
 - Allow users to create, list, update, and delete food items.
 - Allow users to create, list, update, and delete recipes.
@@ -49,13 +50,13 @@ The following are key functionalities that the program will implement.
 - The program will support managing multiple weekly meal plans.
 - Rather than just tracking what items are specifically "in the fridge", the
   program will track whatever items the user "has" in general (including items
-  that could be found in the pantry).
-- The quantity of a food item that a user has will be tracked in a generic
-  "units" quantity of type integer.
+  that could be found in the pantry, etc.).
+- The amount of a food item that a user has will be tracked in a generic "units"
+  quantity of type integer.
 - If a recipe is listed as needing a particular ingredient, it is assumed that
   making the recipe will consume 1 unit of that ingredient.
 - Each relation attribute will be explicitly constrained (unless otherwise
   obvious) with either `null` or `not null` for increased clarity.
-- To simplify the program design, each core relation (not including M2M join
-  tables) will have an `id` integer primary key that is automatically set when
-  a row is created.
+- To simplify the program design, each relation (excluding M2M join tables) will
+  have an `id` integer primary key that is automatically generated when a row is
+  created.
