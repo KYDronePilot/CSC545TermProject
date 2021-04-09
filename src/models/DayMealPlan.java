@@ -4,21 +4,23 @@ import database.Database;
 import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Optional;
 import utils.ModelHelper;
 
 public class DayMealPlan {
 
     public int id;
-    public int breakfastRecipeId;
-    public int lunchRecipeId;
-    public int dinnerRecipeId;
+    public Optional<Integer> breakfastRecipeId;
+    public Optional<Integer> lunchRecipeId;
+    public Optional<Integer> dinnerRecipeId;
 
     public DayMealPlan(int id, int breakfastRecipeId, int lunchRecipeId, int dinnerRecipeId) {
         this.id = id;
-        this.breakfastRecipeId = breakfastRecipeId;
-        this.lunchRecipeId = lunchRecipeId;
-        this.dinnerRecipeId = dinnerRecipeId;
+        this.breakfastRecipeId = Optional.ofNullable(breakfastRecipeId);
+        this.lunchRecipeId = Optional.ofNullable(lunchRecipeId);
+        this.dinnerRecipeId = Optional.ofNullable(dinnerRecipeId);
     }
 
     public static DayMealPlan get(Integer id) throws SQLException {
@@ -55,16 +57,32 @@ public class DayMealPlan {
         );
     }
 
-    public static DayMealPlan create(int breakfastRecipeId, int lunchRecipeId, int dinnerRecipeId)
+    public static DayMealPlan create(
+        Optional<Integer> breakfastRecipeId,
+        Optional<Integer> lunchRecipeId,
+        Optional<Integer> dinnerRecipeId
+    )
         throws SQLException {
         var db = Database.getInstance();
         var id = db.insert(
             "DayMealPlan",
             new String[] { "breakfastRecipeId", "lunchRecipeId", "dinnerRecipeId" },
             stmt -> {
-                stmt.setInt(1, breakfastRecipeId);
-                stmt.setInt(2, lunchRecipeId);
-                stmt.setInt(3, dinnerRecipeId);
+                if (breakfastRecipeId.isPresent()) {
+                    stmt.setInt(1, breakfastRecipeId.get());
+                } else {
+                    stmt.setNull(1, Types.NULL);
+                }
+                if (lunchRecipeId.isPresent()) {
+                    stmt.setInt(2, lunchRecipeId.get());
+                } else {
+                    stmt.setNull(2, Types.NULL);
+                }
+                if (dinnerRecipeId.isPresent()) {
+                    stmt.setInt(3, dinnerRecipeId.get());
+                } else {
+                    stmt.setNull(3, Types.NULL);
+                }
             },
             true
         );
@@ -78,9 +96,21 @@ public class DayMealPlan {
             new String[] { "breakfastRecipeId", "lunchRecipeId", "dinnerRecipeId" },
             id,
             stmt -> {
-                stmt.setInt(1, breakfastRecipeId);
-                stmt.setInt(2, lunchRecipeId);
-                stmt.setInt(3, dinnerRecipeId);
+                if (breakfastRecipeId.isPresent()) {
+                    stmt.setInt(1, breakfastRecipeId.get());
+                } else {
+                    stmt.setNull(1, Types.NULL);
+                }
+                if (lunchRecipeId.isPresent()) {
+                    stmt.setInt(2, lunchRecipeId.get());
+                } else {
+                    stmt.setNull(2, Types.NULL);
+                }
+                if (dinnerRecipeId.isPresent()) {
+                    stmt.setInt(3, dinnerRecipeId.get());
+                } else {
+                    stmt.setNull(3, Types.NULL);
+                }
             }
         );
     }

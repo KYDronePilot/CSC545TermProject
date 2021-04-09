@@ -4,21 +4,23 @@ import database.Database;
 import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Optional;
 import utils.ModelHelper;
 
 public class FoodItem {
 
     public int id;
     public String name;
-    public int nutritionFactsId;
-    public String foodGroup;
+    public Optional<Integer> nutritionFactsId;
+    public Optional<String> foodGroup;
 
     public FoodItem(int id, String name, int nutritionFactsId, String foodGroup) {
         this.id = id;
         this.name = name;
-        this.nutritionFactsId = nutritionFactsId;
-        this.foodGroup = foodGroup;
+        this.nutritionFactsId = Optional.ofNullable(nutritionFactsId);
+        this.foodGroup = Optional.ofNullable(foodGroup);
     }
 
     public static FoodItem get(Integer id) throws SQLException {
@@ -55,7 +57,11 @@ public class FoodItem {
         );
     }
 
-    public static FoodItem create(String name, int nutritionFactsId, String foodGroup)
+    public static FoodItem create(
+        String name,
+        Optional<Integer> nutritionFactsId,
+        Optional<String> foodGroup
+    )
         throws SQLException {
         var db = Database.getInstance();
         var id = db.insert(
@@ -63,8 +69,16 @@ public class FoodItem {
             new String[] { "name", "nutritionFactsId", "foodGroup" },
             stmt -> {
                 stmt.setString(1, name);
-                stmt.setInt(1, nutritionFactsId);
-                stmt.setString(1, foodGroup);
+                if (nutritionFactsId.isPresent()) {
+                    stmt.setInt(2, nutritionFactsId.get());
+                } else {
+                    stmt.setNull(2, Types.NULL);
+                }
+                if (foodGroup.isPresent()) {
+                    stmt.setString(3, foodGroup.get());
+                } else {
+                    stmt.setNull(3, Types.NULL);
+                }
             },
             true
         );
@@ -79,8 +93,16 @@ public class FoodItem {
             id,
             stmt -> {
                 stmt.setString(1, name);
-                stmt.setInt(1, nutritionFactsId);
-                stmt.setString(1, foodGroup);
+                if (nutritionFactsId.isPresent()) {
+                    stmt.setInt(2, nutritionFactsId.get());
+                } else {
+                    stmt.setNull(2, Types.NULL);
+                }
+                if (foodGroup.isPresent()) {
+                    stmt.setString(3, foodGroup.get());
+                } else {
+                    stmt.setNull(3, Types.NULL);
+                }
             }
         );
     }

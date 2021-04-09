@@ -1,11 +1,11 @@
 -- Reference: how to make a column an identity column: https://oracle-base.com/articles/12c/identity-columns-in-oracle-12cr1
 create table NutritionFacts (
     id number generated always as identity primary key,
-    calories number(*, 0) default 0,
-    sugar number(*, 0) default 0,
-    protein number(*, 0) default 0,
-    sodium number(*, 0) default 0,
-    fat number(*, 0) default 0
+    calories number(*, 0) default 0 not null,
+    sugar number(*, 0) default 0 not null,
+    protein number(*, 0) default 0 not null,
+    sodium number(*, 0) default 0 not null,
+    fat number(*, 0) default 0 not null
 );
 
 create table FoodItem (

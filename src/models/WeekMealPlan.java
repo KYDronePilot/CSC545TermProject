@@ -4,19 +4,21 @@ import database.Database;
 import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Optional;
 import utils.ModelHelper;
 
 public class WeekMealPlan {
 
     public int id;
-    public int mondayRecipeId;
-    public int tuesdayRecipeId;
-    public int wednesdayRecipeId;
-    public int thursdayRecipeId;
-    public int fridayRecipeId;
-    public int saturdayRecipeId;
-    public int sundayRecipeId;
+    public Optional<Integer> mondayRecipeId;
+    public Optional<Integer> tuesdayRecipeId;
+    public Optional<Integer> wednesdayRecipeId;
+    public Optional<Integer> thursdayRecipeId;
+    public Optional<Integer> fridayRecipeId;
+    public Optional<Integer> saturdayRecipeId;
+    public Optional<Integer> sundayRecipeId;
 
     public WeekMealPlan(
         int id,
@@ -29,13 +31,13 @@ public class WeekMealPlan {
         int sundayRecipeId
     ) {
         this.id = id;
-        this.mondayRecipeId = mondayRecipeId;
-        this.tuesdayRecipeId = tuesdayRecipeId;
-        this.wednesdayRecipeId = wednesdayRecipeId;
-        this.thursdayRecipeId = thursdayRecipeId;
-        this.fridayRecipeId = fridayRecipeId;
-        this.saturdayRecipeId = saturdayRecipeId;
-        this.sundayRecipeId = sundayRecipeId;
+        this.mondayRecipeId = Optional.ofNullable(mondayRecipeId);
+        this.tuesdayRecipeId = Optional.ofNullable(tuesdayRecipeId);
+        this.wednesdayRecipeId = Optional.ofNullable(wednesdayRecipeId);
+        this.thursdayRecipeId = Optional.ofNullable(thursdayRecipeId);
+        this.fridayRecipeId = Optional.ofNullable(fridayRecipeId);
+        this.saturdayRecipeId = Optional.ofNullable(saturdayRecipeId);
+        this.sundayRecipeId = Optional.ofNullable(sundayRecipeId);
     }
 
     public static WeekMealPlan get(Integer id) throws SQLException {
@@ -81,13 +83,13 @@ public class WeekMealPlan {
     }
 
     public static WeekMealPlan create(
-        int mondayRecipeId,
-        int tuesdayRecipeId,
-        int wednesdayRecipeId,
-        int thursdayRecipeId,
-        int fridayRecipeId,
-        int saturdayRecipeId,
-        int sundayRecipeId
+        Optional<Integer> mondayRecipeId,
+        Optional<Integer> tuesdayRecipeId,
+        Optional<Integer> wednesdayRecipeId,
+        Optional<Integer> thursdayRecipeId,
+        Optional<Integer> fridayRecipeId,
+        Optional<Integer> saturdayRecipeId,
+        Optional<Integer> sundayRecipeId
     )
         throws SQLException {
         var db = Database.getInstance();
@@ -103,13 +105,41 @@ public class WeekMealPlan {
                 "sundayRecipeId",
             },
             stmt -> {
-                stmt.setInt(1, mondayRecipeId);
-                stmt.setInt(2, tuesdayRecipeId);
-                stmt.setInt(3, wednesdayRecipeId);
-                stmt.setInt(4, thursdayRecipeId);
-                stmt.setInt(5, fridayRecipeId);
-                stmt.setInt(6, saturdayRecipeId);
-                stmt.setInt(7, sundayRecipeId);
+                if (mondayRecipeId.isPresent()) {
+                    stmt.setInt(1, mondayRecipeId.get());
+                } else {
+                    stmt.setNull(1, Types.NULL);
+                }
+                if (tuesdayRecipeId.isPresent()) {
+                    stmt.setInt(2, tuesdayRecipeId.get());
+                } else {
+                    stmt.setNull(2, Types.NULL);
+                }
+                if (wednesdayRecipeId.isPresent()) {
+                    stmt.setInt(3, wednesdayRecipeId.get());
+                } else {
+                    stmt.setNull(3, Types.NULL);
+                }
+                if (thursdayRecipeId.isPresent()) {
+                    stmt.setInt(4, thursdayRecipeId.get());
+                } else {
+                    stmt.setNull(4, Types.NULL);
+                }
+                if (fridayRecipeId.isPresent()) {
+                    stmt.setInt(5, fridayRecipeId.get());
+                } else {
+                    stmt.setNull(5, Types.NULL);
+                }
+                if (saturdayRecipeId.isPresent()) {
+                    stmt.setInt(6, saturdayRecipeId.get());
+                } else {
+                    stmt.setNull(6, Types.NULL);
+                }
+                if (sundayRecipeId.isPresent()) {
+                    stmt.setInt(7, sundayRecipeId.get());
+                } else {
+                    stmt.setNull(7, Types.NULL);
+                }
             },
             true
         );
@@ -131,14 +161,46 @@ public class WeekMealPlan {
             },
             id,
             stmt -> {
-                stmt.setInt(1, mondayRecipeId);
-                stmt.setInt(2, tuesdayRecipeId);
-                stmt.setInt(3, wednesdayRecipeId);
-                stmt.setInt(4, thursdayRecipeId);
-                stmt.setInt(5, fridayRecipeId);
-                stmt.setInt(6, saturdayRecipeId);
-                stmt.setInt(7, sundayRecipeId);
+                if (mondayRecipeId.isPresent()) {
+                    stmt.setInt(1, mondayRecipeId.get());
+                } else {
+                    stmt.setNull(1, Types.NULL);
+                }
+                if (tuesdayRecipeId.isPresent()) {
+                    stmt.setInt(2, tuesdayRecipeId.get());
+                } else {
+                    stmt.setNull(2, Types.NULL);
+                }
+                if (wednesdayRecipeId.isPresent()) {
+                    stmt.setInt(3, wednesdayRecipeId.get());
+                } else {
+                    stmt.setNull(3, Types.NULL);
+                }
+                if (thursdayRecipeId.isPresent()) {
+                    stmt.setInt(4, thursdayRecipeId.get());
+                } else {
+                    stmt.setNull(4, Types.NULL);
+                }
+                if (fridayRecipeId.isPresent()) {
+                    stmt.setInt(5, fridayRecipeId.get());
+                } else {
+                    stmt.setNull(5, Types.NULL);
+                }
+                if (saturdayRecipeId.isPresent()) {
+                    stmt.setInt(6, saturdayRecipeId.get());
+                } else {
+                    stmt.setNull(6, Types.NULL);
+                }
+                if (sundayRecipeId.isPresent()) {
+                    stmt.setInt(7, sundayRecipeId.get());
+                } else {
+                    stmt.setNull(7, Types.NULL);
+                }
             }
         );
+    }
+
+    public void delete() throws SQLException {
+        ModelHelper.delete(id, "WeekMealPlan");
     }
 }
