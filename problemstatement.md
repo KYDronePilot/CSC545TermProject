@@ -60,3 +60,7 @@ The following are key functionalities that the program will implement:
 - To simplify the program design, each relation (excluding M2M join tables) will
   have an `id` integer primary key that is automatically generated when a row is
   created.
+
+## ER Diagram
+
+![Application Database ER Diagram](ER_Diagram.pdf)
