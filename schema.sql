@@ -13,6 +13,7 @@ create table FoodItem (
     name varchar2(50) not null,
     nutritionFactsId number not null,
     foodGroup varchar2(30) not null,
+    units number(*, 0) default 0 not null,
     constraint nutritionFactsFk foreign key (nutritionFactsId) references NutritionFacts(id) on delete cascade
 );
 
