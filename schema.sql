@@ -20,8 +20,8 @@ create table FoodItem (
 create table Recipe (
     id number generated always as identity primary key,
     name varchar2(100) not null,
-    instructions clob null,
-    category varchar2(60) null
+    instructions clob not null,
+    category varchar2(60) not null
 );
 
 create table RecipeFoodItem (

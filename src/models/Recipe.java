@@ -4,7 +4,6 @@ import database.Database;
 import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Optional;
 import utils.ModelHelper;
@@ -13,28 +12,30 @@ public class Recipe {
 
     public int id;
     public String name;
-    public Optional<String> instructions;
-    public Optional<String> category;
+    public String instructions;
+    public String category;
 
     public Recipe(int id, String name, String instructions, String category) {
         this.id = id;
         this.name = name;
-        this.instructions = Optional.ofNullable(instructions);
-        this.category = Optional.ofNullable(category);
+        this.instructions = instructions;
+        this.category = category;
     }
 
-    public static Recipe get(Integer id) throws SQLException {
-        return ModelHelper.get(
-            id,
-            "Recipe",
-            rs -> {
-                return new Recipe(
-                    id,
-                    rs.getString("name"),
-                    rs.getString("instructions"),
-                    rs.getString("category")
-                );
-            }
+    public static Optional<Recipe> get(Integer id) throws SQLException {
+        return Optional.ofNullable(
+            ModelHelper.get(
+                id,
+                "Recipe",
+                rs -> {
+                    return new Recipe(
+                        id,
+                        rs.getString("name"),
+                        rs.getString("instructions"),
+                        rs.getString("category")
+                    );
+                }
+            )
         );
     }
 
@@ -57,11 +58,7 @@ public class Recipe {
         );
     }
 
-    public static Recipe create(
-        String name,
-        Optional<String> instructions,
-        Optional<String> category
-    )
+    public static Recipe create(String name, String instructions, String category)
         throws SQLException {
         var db = Database.getInstance();
         var id = db.insert(
@@ -69,20 +66,12 @@ public class Recipe {
             new String[] { "name", "instructions", "category" },
             stmt -> {
                 stmt.setString(1, name);
-                if (instructions.isPresent()) {
-                    stmt.setString(2, instructions.get());
-                } else {
-                    stmt.setNull(2, Types.NULL);
-                }
-                if (category.isPresent()) {
-                    stmt.setString(3, category.get());
-                } else {
-                    stmt.setNull(3, Types.NULL);
-                }
+                stmt.setString(2, instructions);
+                stmt.setString(3, category);
             },
             true
         );
-        return get(id.get());
+        return get(id.get()).get();
     }
 
     public void update() throws SQLException {
@@ -93,16 +82,8 @@ public class Recipe {
             id,
             stmt -> {
                 stmt.setString(1, name);
-                if (instructions.isPresent()) {
-                    stmt.setString(2, instructions.get());
-                } else {
-                    stmt.setNull(2, Types.NULL);
-                }
-                if (category.isPresent()) {
-                    stmt.setString(3, category.get());
-                } else {
-                    stmt.setNull(3, Types.NULL);
-                }
+                stmt.setString(2, instructions);
+                stmt.setString(3, category);
             }
         );
     }
