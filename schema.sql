@@ -32,30 +32,17 @@ create table RecipeFoodItem (
     constraint foodItemFk foreign key (foodItemId) references FoodItem(id) on delete cascade
 );
 
-create table DayMealPlan (
+create table MealPlan (
     id number generated always as identity primary key,
-    breakfastRecipeId number null,
-    lunchRecipeId number null,
-    dinnerRecipeId number null,
-    constraint breakfastRecipeFk foreign key (breakfastRecipeId) references Recipe(id) on delete set null,
-    constraint lunchRecipeFk foreign key (lunchRecipeId) references Recipe(id) on delete set null,
-    constraint dinnerRecipeFk foreign key (dinnerRecipeId) references Recipe(id) on delete set null
+    name varchar2(20) not null,
+    day char(3) not null,
+    constraint validateDayOfWeekConstraint check (day in ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'))
 );
 
-create table WeekMealPlan (
-    id number generated always as identity primary key,
-    mondayRecipeId number null,
-    tuesdayRecipeId number null,
-    wednesdayRecipeId number null,
-    thursdayRecipeId number null,
-    fridayRecipeId number null,
-    saturdayRecipeId number null,
-    sundayRecipeId number null,
-    constraint mondayRecipeFk foreign key (mondayRecipeId) references Recipe(id) on delete set null,
-    constraint tuesdayRecipeFk foreign key (tuesdayRecipeId) references Recipe(id) on delete set null,
-    constraint wednesdayRecipeFk foreign key (wednesdayRecipeId) references Recipe(id) on delete set null,
-    constraint thursdayRecipeFk foreign key (thursdayRecipeId) references Recipe(id) on delete set null,
-    constraint fridayRecipeFk foreign key (fridayRecipeId) references Recipe(id) on delete set null,
-    constraint saturdayRecipeFk foreign key (saturdayRecipeId) references Recipe(id) on delete set null,
-    constraint sundayRecipeFk foreign key (sundayRecipeId) references Recipe(id) on delete set null
+create table RecipeMealPlan (
+    recipeId number,
+    mealPlanId number,
+    primary key (recipeId, mealPlanId),
+    constraint recipeFk foreign key (recipeId) references Recipe(id) on delete cascade,
+    constraint mealPlanFk foreign key (mealPlanId) references MealPlan(id) on delete cascade
 );
