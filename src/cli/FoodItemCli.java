@@ -27,6 +27,12 @@ class FoodItemCli extends ModelCli {
                 true,
                 scanner
             );
+            var foodUnits = validatedInt(
+                "Enter the number of units of this food (default: 0): ",
+                null,
+                false,
+                scanner
+            );
             var calories = validatedInt("Enter the number of calories: ", null, true, scanner);
             var sugar = validatedInt("Enter the number of sugar: ", null, true, scanner);
             var protein = validatedInt("Enter the number of protein: ", null, true, scanner);
@@ -39,7 +45,12 @@ class FoodItemCli extends ModelCli {
                 sodium.get(),
                 fat.get()
             );
-            var newItem = FoodItem.create(foodName.get(), newNutritionFacts.id, foodGroup.get());
+            var newItem = FoodItem.create(
+                foodName.get(),
+                newNutritionFacts.id,
+                foodGroup.get(),
+                foodUnits.isPresent() ? foodUnits.get() : 0
+            );
         } catch (SQLException e) {}
         return 0;
     }
@@ -48,13 +59,16 @@ class FoodItemCli extends ModelCli {
     int list() {
         try {
             var items = FoodItem.filter("select * from FoodItem", stmt -> {});
-            var table = new CliTable(new String[] { "ID", "Name", "Food Group", "More info..." });
+            var table = new CliTable(
+                new String[] { "ID", "Name", "Food Group", "Units", "More info..." }
+            );
             for (var item : items) {
                 table.rows.add(
                     new String[] {
                         String.valueOf(item.id),
                         item.name,
                         item.foodGroup,
+                        String.valueOf(item.units),
                         "Run `get` sub-command for more info",
                     }
                 );
@@ -80,6 +94,7 @@ class FoodItemCli extends ModelCli {
             System.out.printf("\nID: %s\n", foodItemVal.id);
             System.out.printf("Name: %s\n", foodItemVal.name);
             System.out.printf("Food Group: %s\n", foodItemVal.foodGroup);
+            System.out.printf("Units: %s\n", foodItemVal.units);
             System.out.printf("Calories: %s\n", nutritionFacts.calories);
             System.out.printf("Sugar: %s\n", nutritionFacts.sugar);
             System.out.printf("Protein: %s\n", nutritionFacts.protein);
@@ -119,6 +134,15 @@ class FoodItemCli extends ModelCli {
             );
             if (foodGroup.isPresent()) {
                 foodItemVal.foodGroup = foodGroup.get();
+            }
+            var units = validatedInt(
+                String.format("Enter the food units (\"%s\"): ", foodItemVal.units),
+                null,
+                false,
+                scanner
+            );
+            if (units.isPresent()) {
+                foodItemVal.units = units.get();
             }
 
             var calories = validatedInt(

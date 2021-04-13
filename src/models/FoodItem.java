@@ -17,12 +17,14 @@ public class FoodItem {
     public String name;
     public Integer nutritionFactsId;
     public String foodGroup;
+    public int units;
 
-    public FoodItem(int id, String name, Integer nutritionFactsId, String foodGroup) {
+    public FoodItem(int id, String name, Integer nutritionFactsId, String foodGroup, int units) {
         this.id = id;
         this.name = name;
         this.nutritionFactsId = nutritionFactsId;
         this.foodGroup = foodGroup;
+        this.units = units;
     }
 
     public static Optional<FoodItem> get(Integer id) throws SQLException {
@@ -35,7 +37,8 @@ public class FoodItem {
                         id,
                         rs.getString("name"),
                         rs.getInt("nutritionFactsId"),
-                        rs.getString("foodGroup")
+                        rs.getString("foodGroup"),
+                        rs.getInt("units")
                     );
                 }
             )
@@ -55,13 +58,19 @@ public class FoodItem {
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getInt("nutritionFactsId"),
-                    rs.getString("foodGroup")
+                    rs.getString("foodGroup"),
+                    rs.getInt("units")
                 );
             }
         );
     }
 
-    public static FoodItem create(String name, Integer nutritionFactsId, String foodGroup)
+    public static FoodItem create(
+        String name,
+        Integer nutritionFactsId,
+        String foodGroup,
+        int units
+    )
         throws SQLException {
         var db = Database.getInstance();
         var id = db.insert(
@@ -71,6 +80,7 @@ public class FoodItem {
                 stmt.setString(1, name);
                 stmt.setInt(2, nutritionFactsId);
                 stmt.setString(3, foodGroup);
+                stmt.setInt(4, units);
             },
             true
         );
@@ -87,6 +97,7 @@ public class FoodItem {
                 stmt.setString(1, name);
                 stmt.setInt(2, nutritionFactsId);
                 stmt.setString(3, foodGroup);
+                stmt.setInt(4, units);
             }
         );
     }
