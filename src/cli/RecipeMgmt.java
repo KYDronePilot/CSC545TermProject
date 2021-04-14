@@ -7,7 +7,10 @@ import picocli.CommandLine.Command;
 /**
  * Main CLI entry point for application.
  */
-@Command(name = "recipe_mgmt", subcommands = { FoodItemCli.class })
+@Command(
+    name = "recipe_mgmt",
+    subcommands = { FoodItemCli.class, RecipeCli.class, MealPlanCli.class }
+)
 public class RecipeMgmt implements Callable<Integer> {
 
     // @Option(names = "-v")

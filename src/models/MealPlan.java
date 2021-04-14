@@ -5,6 +5,7 @@ import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 import utils.ModelHelper;
 
 public class MealPlan {
@@ -19,13 +20,15 @@ public class MealPlan {
         this.day = day;
     }
 
-    public static MealPlan get(Integer id) throws SQLException {
-        return ModelHelper.get(
-            id,
-            "MealPlan",
-            rs -> {
-                return new MealPlan(id, rs.getString("name"), rs.getString("day"));
-            }
+    public static Optional<MealPlan> get(Integer id) throws SQLException {
+        return Optional.ofNullable(
+            ModelHelper.get(
+                id,
+                "MealPlan",
+                rs -> {
+                    return new MealPlan(id, rs.getString("name"), rs.getString("day"));
+                }
+            )
         );
     }
 
@@ -54,7 +57,7 @@ public class MealPlan {
             },
             true
         );
-        return get(id.get());
+        return get(id.get()).get();
     }
 
     public void update() throws SQLException {

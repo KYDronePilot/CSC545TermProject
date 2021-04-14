@@ -32,6 +32,13 @@ interface CasterLambda<T> {
 }
 
 /**
+ * Lambda function which reads string data from a scanner and returns it.
+ */
+interface ScannerReaderLambda {
+    String run(Scanner input);
+}
+
+/**
  * Model CLI superclass for managing a database model.
  */
 public abstract class ModelCli implements Callable<Integer> {
@@ -59,13 +66,14 @@ public abstract class ModelCli implements Callable<Integer> {
         ValidateInputLambda<T>[] validators,
         CasterLambda<T> caster,
         boolean required,
-        Scanner scanner
+        Scanner scanner,
+        ScannerReaderLambda reader
     ) {
         // Keep trying until valid input given
         while (true) {
             // Prompt and get value
             System.out.print(prompt);
-            var value = scanner.nextLine();
+            var value = reader.run(scanner);
             // Remove whitespace
             value = value.strip();
             if (value.isBlank()) {
@@ -127,7 +135,46 @@ public abstract class ModelCli implements Callable<Integer> {
                 return value;
             },
             required,
-            scanner
+            scanner,
+            readerScanner -> {
+                return readerScanner.nextLine();
+            }
+        );
+    }
+
+    /**
+     * Specialized validated input for reading multiline strings.
+     *
+     * @param prompt to ask user for input
+     * @param required whether this input can be left blank
+     * @param scanner Scanner instance to read input
+     * @return validated string input if valid one given, else Optional.empty()
+     */
+    protected Optional<String> validatedMultilineString(
+        String prompt,
+        boolean required,
+        Scanner scanner
+    ) {
+        return validatedInput(
+            prompt,
+            null,
+            value -> {
+                return value;
+            },
+            required,
+            scanner,
+            readerScanner -> {
+                String lines = "";
+                // Read lines until a single line with "/" is entered
+                while (true) {
+                    var line = readerScanner.nextLine();
+                    if (line.equals("/")) {
+                        return lines;
+                    } else {
+                        lines += line + "\n";
+                    }
+                }
+            }
         );
     }
 
@@ -157,7 +204,10 @@ public abstract class ModelCli implements Callable<Integer> {
                 }
             },
             required,
-            scanner
+            scanner,
+            readerScanner -> {
+                return readerScanner.nextLine();
+            }
         );
     }
 
