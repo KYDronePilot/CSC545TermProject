@@ -5,6 +5,7 @@ import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import utils.ModelHelper;
 
@@ -90,5 +91,14 @@ public class Recipe {
 
     public void delete() throws SQLException {
         ModelHelper.delete(id, "Recipe");
+    }
+
+    public List<FoodItem> getFoodItems() throws SQLException {
+        return FoodItem.filter(
+            "select fi.* from FoodItem fi join RecipeFoodItem rfi on fi.id = rfi.foodItemId join Recipe r on rfi.recipeId = r.id where r.id = ?",
+            stmt -> {
+                stmt.setInt(1, id);
+            }
+        );
     }
 }

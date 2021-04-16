@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Optional;
 import utils.ModelHelper;
 
-public class FoodItem {
+public class FoodItem implements Comparable<FoodItem> {
 
     // Names of columns (excluding id)
     public static String[] columns = { "name", "nutritionFactsId", "foodGroup" };
 
-    public int id;
+    public Integer id;
     public String name;
     public Integer nutritionFactsId;
     public String foodGroup;
@@ -114,5 +114,15 @@ public class FoodItem {
      */
     public NutritionFacts getNutritionFacts() throws SQLException {
         return NutritionFacts.get(nutritionFactsId);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", name, foodGroup);
+    }
+
+    @Override
+    public int compareTo(FoodItem that) {
+        return this.id.compareTo(that.id);
     }
 }

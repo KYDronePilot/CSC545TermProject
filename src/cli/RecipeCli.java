@@ -1,6 +1,8 @@
 package cli;
 
+import database.Database;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Scanner;
 import models.FoodItem;
 import models.Recipe;
@@ -12,9 +14,41 @@ import picocli.CommandLine.Command;
 @Command(name = "recipe", description = "Recipe operations")
 class RecipeCli extends ModelCli {
 
+    /**
+     * Link a list of ingredients to a particular recipe.
+     *
+     * @param recipeId to link ingredients to
+     * @param rawIngredients comma-separated list of ingredient IDs
+     * @throws SQLException if error executing query
+     */
+    private void saveIngredients(Integer recipeId, String rawIngredients) throws SQLException {
+        var db = Database.getInstance();
+        // Delete any existing ingredients for recipe
+        db.modify(
+            "delete from RecipeFoodItem where recipeId = ?",
+            stmt -> {
+                stmt.setInt(1, recipeId);
+            }
+        );
+        // Create new M2M ingredient links for recipe
+        var splitIngredients = rawIngredients.split(",");
+        for (var ingredient : splitIngredients) {
+            var ingredientId = Integer.parseInt(ingredient.strip());
+            db.modify(
+                "insert into RecipeFoodItem (recipeId, foodItemId) values (?, ?)",
+                stmt -> {
+                    stmt.setInt(1, recipeId);
+                    stmt.setInt(2, ingredientId);
+                }
+            );
+        }
+    }
+
     @Command(name = "add", description = "Add a Recipe")
     int add() {
         try (var scanner = new Scanner(System.in)) {
+            var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
+            Collections.sort(ingredients);
             var recipeName = validatedString(
                 "Enter recipe name: ",
                 maxLengthValidator(20),
@@ -24,6 +58,16 @@ class RecipeCli extends ModelCli {
             var recipeCategory = validatedString(
                 "Enter the recipe category: ",
                 maxLengthValidator(20),
+                true,
+                scanner
+            );
+            System.out.println("The following are all available recipe ingredients:");
+            for (var ingredient : ingredients) {
+                System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
+            }
+            var recipeIngredientIds = validatedString(
+                "Enter comma-separated IDs of ingredients used in recipe: ",
+                null,
                 true,
                 scanner
             );
@@ -38,6 +82,7 @@ class RecipeCli extends ModelCli {
                 recipeInstructions.get(),
                 recipeCategory.get()
             );
+            saveIngredients(newItem.id, recipeIngredientIds.get());
         } catch (SQLException e) {}
         return 0;
     }
@@ -74,9 +119,14 @@ class RecipeCli extends ModelCli {
                 return 1;
             }
             var recipeVal = recipe.get();
+            var ingredients = recipeVal.getFoodItems();
             System.out.printf("\nID: %s\n", recipeVal.id);
             System.out.printf("Name: %s\n", recipeVal.name);
             System.out.printf("Category: %s\n", recipeVal.category);
+            System.out.println("Ingredients:");
+            for (var ingredient : ingredients) {
+                System.out.printf("  %s\n", ingredient);
+            }
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -86,6 +136,8 @@ class RecipeCli extends ModelCli {
     @Command(name = "update", description = "Update a recipe's values")
     int update() {
         try (var scanner = new Scanner(System.in)) {
+            var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
+            Collections.sort(ingredients);
             var recipeId = validatedInt("Enter the recipe ID to update: ", null, true, scanner);
             var recipe = Recipe.get(recipeId.get());
             if (recipe.isEmpty()) {
@@ -108,6 +160,16 @@ class RecipeCli extends ModelCli {
                 false,
                 scanner
             );
+            System.out.println("The following are all available recipe ingredients:");
+            for (var ingredient : ingredients) {
+                System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
+            }
+            var recipeIngredientIds = validatedString(
+                "Enter comma-separated IDs of ingredients used in recipe: ",
+                null,
+                true,
+                scanner
+            );
             if (recipeCategory.isPresent()) {
                 recipeVal.category = recipeCategory.get();
             }
@@ -121,6 +183,7 @@ class RecipeCli extends ModelCli {
             }
             System.out.println("Saving to DB...");
             recipeVal.update();
+            saveIngredients(recipeVal.id, recipeIngredientIds.get());
         } catch (SQLException e) {
             System.out.println(e);
         }
