@@ -28,15 +28,15 @@ create table RecipeFoodItem (
     recipeId number,
     foodItemId number,
     primary key (recipeId, foodItemId),
-    constraint recipeFk foreign key (recipeId) references Recipe(id) on delete cascade,
-    constraint foodItemFk foreign key (foodItemId) references FoodItem(id) on delete cascade
+    constraint foodItemRecipeFk foreign key (recipeId) references Recipe(id) on delete cascade,
+    constraint recipeFoodItemFk foreign key (foodItemId) references FoodItem(id) on delete cascade
 );
 
 create table MealPlan (
     id number generated always as identity primary key,
     name varchar2(20) not null,
-    day char(3) not null,
-    constraint validateDayOfWeekConstraint check (day in ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'))
+    day char(3) not null unique,
+    constraint validateDayOfWeekCheck check (day in ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'))
 );
 
 create table RecipeMealPlan (
