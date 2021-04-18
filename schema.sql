@@ -47,6 +47,7 @@ create table RecipeMealPlan (
     recipeId number,
     mealPlanId number,
     primary key (recipeId, mealPlanId),
+    meal varchar2(20) not null,
     constraint recipeFk foreign key (recipeId)
         references Recipe(id) on delete cascade,
     constraint mealPlanFk foreign key (mealPlanId)
