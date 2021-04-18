@@ -6,7 +6,7 @@ author:
     - Trevor Cunagin
     - Ethen Holzapfel
     - Michael Galliers
-date: \today{}
+date: April 18, 2021
 papersize: [letterpaper]
 geometry: [margin=1in]
 urlcolor: blue
@@ -27,6 +27,8 @@ header-includes:
 [ER Diagram]
 
 ## Relational Schema
+
+Reference: [How to make a column an auto-generating identity column](https://oracle-base.com/articles/12c/identity-columns-in-oracle-12cr1)
 
 ```sql
 create table NutritionFacts (
@@ -77,6 +79,7 @@ create table RecipeMealPlan (
     recipeId number,
     mealPlanId number,
     primary key (recipeId, mealPlanId),
+    meal varchar2(20) not null,
     constraint recipeFk foreign key (recipeId)
         references Recipe(id) on delete cascade,
     constraint mealPlanFk foreign key (mealPlanId)
