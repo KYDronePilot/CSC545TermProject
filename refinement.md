@@ -24,7 +24,7 @@ header-includes:
 
 ## Improved ER Diagram
 
-[ER Diagram]
+![Updated Database ER Diagram](ER_Diagram.pdf)
 
 ## Relational Schema
 
