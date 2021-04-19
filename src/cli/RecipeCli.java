@@ -11,7 +11,7 @@ import picocli.CommandLine.Command;
 /**
  * CLI for managing recipes.
  */
-@Command(name = "recipe", description = "Recipe operations")
+@Command(name = "recipe", description = "Recipe management", mixinStandardHelpOptions = true)
 class RecipeCli extends ModelCli {
 
     /**
@@ -133,7 +133,7 @@ class RecipeCli extends ModelCli {
         return 0;
     }
 
-    @Command(name = "update", description = "Update a recipe's values")
+    @Command(name = "update", description = "Update a recipe's information")
     int update() {
         try (var scanner = new Scanner(System.in)) {
             var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});

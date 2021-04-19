@@ -10,7 +10,7 @@ import picocli.CommandLine.Command;
 /**
  * CLI for managing meal plans.
  */
-@Command(name = "meals", description = "Meal plan operations")
+@Command(name = "meals", description = "Meal plan management", mixinStandardHelpOptions = true)
 class MealPlanCli extends ModelCli {
 
     /**
@@ -150,7 +150,7 @@ class MealPlanCli extends ModelCli {
         return 0;
     }
 
-    @Command(name = "update", description = "Update a meal plan's values")
+    @Command(name = "update", description = "Update a meal plan's information")
     int update() {
         try (var scanner = new Scanner(System.in)) {
             var mealPlanId = validatedInt(

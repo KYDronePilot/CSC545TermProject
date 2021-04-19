@@ -9,7 +9,7 @@ import picocli.CommandLine.Command;
 /**
  * CLI for managing food items and their nutrition facts.
  */
-@Command(name = "food", description = "Food item operations")
+@Command(name = "food", description = "Food item management", mixinStandardHelpOptions = true)
 class FoodItemCli extends ModelCli {
 
     @Command(name = "add", description = "Add a food item")
@@ -106,7 +106,7 @@ class FoodItemCli extends ModelCli {
         return 0;
     }
 
-    @Command(name = "update", description = "Update a food item's values")
+    @Command(name = "update", description = "Update a food item's information")
     int update() {
         try (var scanner = new Scanner(System.in)) {
             var foodId = validatedInt("Enter the food ID to update: ", null, true, scanner);

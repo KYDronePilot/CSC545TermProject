@@ -8,7 +8,9 @@ import picocli.CommandLine.Command;
  */
 @Command(
     name = "recipe_mgmt",
-    subcommands = { FoodItemCli.class, RecipeCli.class, MealPlanCli.class }
+    subcommands = { FoodItemCli.class, RecipeCli.class, MealPlanCli.class },
+    mixinStandardHelpOptions = true,
+    description = "Manage recipes, meal plans, and a shopping list for items needed."
 )
 public class RecipeMgmt {
 
