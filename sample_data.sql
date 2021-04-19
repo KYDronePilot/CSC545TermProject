@@ -45,11 +45,32 @@ insert into RecipeFoodItem (recipeId, foodItemId) values (2, 6);
 insert into RecipeFoodItem (recipeId, foodItemId) values (3, 7);
 
 -- Meal plans
-insert into MealPlan (name, day) values ('Monday drag', 'mon');
+insert into MealPlan (name, day) values ('Monday meals', 'mon');
+insert into MealPlan (name, day) values ('Tuesday meals', 'tue');
+insert into MealPlan (name, day) values ('Wednesday meals', 'wed');
+insert into MealPlan (name, day) values ('Thursday meals', 'thu');
+insert into MealPlan (name, day) values ('Friday meals', 'fri');
+insert into MealPlan (name, day) values ('Saturday meals', 'sat');
+insert into MealPlan (name, day) values ('Sunday meals', 'sun');
 
 -- Meal plan-recipe links
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 1, 'breakfast');
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 1, 'lunch');
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 1, 'dinner');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 2, 'breakfast');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 2, 'lunch');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 2, 'dinner');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 3, 'breakfast');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 3, 'lunch');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 3, 'dinner');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 4, 'breakfast');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 4, 'lunch');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 4, 'dinner');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 5, 'breakfast');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 5, 'lunch');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 5, 'dinner');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 6, 'breakfast');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 6, 'lunch');
+insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 6, 'dinner');
 
 commit;
