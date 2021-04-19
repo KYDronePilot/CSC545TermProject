@@ -1,8 +1,10 @@
 package cli;
 
+import database.Database;
 import java.sql.SQLException;
 import java.util.Scanner;
 import models.MealPlan;
+import models.Recipe;
 import picocli.CommandLine.Command;
 
 /**
@@ -10,6 +12,69 @@ import picocli.CommandLine.Command;
  */
 @Command(name = "meals", description = "Meal plan operations")
 class MealPlanCli extends ModelCli {
+
+    /**
+     * Get a list of all recipes in the system.
+     *
+     * @return formatted list of recipes
+     * @throws SQLException if error executing SQL query
+     */
+    private String getRecipeList() throws SQLException {
+        var recipes = Recipe.filter("select * from Recipe", stmt -> {});
+        var text = "Recipes:";
+        for (var recipe : recipes) {
+            text += String.format("\n  %3d: %s", recipe.id, recipe.name);
+        }
+        return text;
+    }
+
+    /**
+     * Delete any existing meals for a meal plan and prompt the user to enter in more.
+     *
+     * @param scanner active System.in reader
+     * @param mealPlanId ID of the meal plan
+     * @throws SQLException if error executing SQL query
+     */
+    private void updateMeals(Scanner scanner, Integer mealPlanId) throws SQLException {
+        var db = Database.getInstance();
+        // Delete any existing meals
+        db.modify(
+            "delete from RecipeMealPlan where mealPlanId = ?",
+            stmt -> {
+                stmt.setInt(1, mealPlanId);
+            }
+        );
+        System.out.print(getRecipeList());
+        while (true) {
+            // Get meal info
+            var meal = validatedString(
+                "Enter the name of a meal for this plan (e.g. 'breakfast', 'lunch', etc.): ",
+                maxLengthValidator(20),
+                true,
+                scanner
+            );
+            var recipeId = validatedInt(
+                "Enter the ID of the recipe for this meal: ",
+                null,
+                true,
+                scanner
+            );
+            // Add to DB
+            db.modify(
+                "insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (?,?,?)",
+                stmt -> {
+                    stmt.setInt(1, recipeId.get());
+                    stmt.setInt(2, mealPlanId);
+                    stmt.setString(3, meal.get());
+                }
+            );
+            // Stop if user is done entering meal plans
+            System.out.print("Would you like to add another meal to this plan? (y/N): ");
+            if (!scanner.nextLine().toLowerCase().equals("y")) {
+                break;
+            }
+        }
+    }
 
     @Command(name = "add", description = "Add a meal plan")
     int add() {
@@ -27,6 +92,7 @@ class MealPlanCli extends ModelCli {
                 scanner
             );
             var newItem = MealPlan.create(mealPlanName.get(), mealPlanDay.get());
+            updateMeals(scanner, newItem.id);
         } catch (SQLException e) {}
         return 0;
     }
@@ -66,6 +132,18 @@ class MealPlanCli extends ModelCli {
             System.out.printf("\nID: %s\n", mealPlanVal.id);
             System.out.printf("Name: %s\n", mealPlanVal.name);
             System.out.printf("Day: %s\n", mealPlanVal.day);
+            System.out.println("Meals");
+            var db = Database.getInstance();
+            // Get all meals for this meal plan
+            db.select(
+                "select rmp.meal as meal, r.name as name from Recipe r join RecipeMealPlan rmp on r.id = rmp.recipeId join MealPlan mp on rmp.mealPlanId = mp.id where mp.id = ?",
+                rs -> {
+                    System.out.printf("  %s: %s\n", rs.getString("meal"), rs.getString("name"));
+                },
+                stmt -> {
+                    stmt.setInt(1, mealPlanVal.id);
+                }
+            );
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -106,6 +184,7 @@ class MealPlanCli extends ModelCli {
                 mealPlanVal.day = mealPlanDay.get();
             }
             mealPlanVal.update();
+            updateMeals(scanner, mealPlanVal.id);
         } catch (SQLException e) {
             System.out.println(e);
         }
