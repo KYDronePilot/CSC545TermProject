@@ -1,6 +1,5 @@
 package cli;
 
-import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -11,20 +10,13 @@ import picocli.CommandLine.Command;
     name = "recipe_mgmt",
     subcommands = { FoodItemCli.class, RecipeCli.class, MealPlanCli.class }
 )
-public class RecipeMgmt implements Callable<Integer> {
+public class RecipeMgmt {
 
     // @Option(names = "-v")
     // int verbose;
 
-    // FIXME
-    @Override
-    public Integer call() {
-        System.out.println("Hi from test: ");
-        return 0;
-    }
-
     public static void main(String... args) {
         var exitCode = new CommandLine(new RecipeMgmt()).execute(args);
-        System.out.println(exitCode);
+        System.exit(exitCode);
     }
 }

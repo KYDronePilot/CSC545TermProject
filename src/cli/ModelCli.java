@@ -2,7 +2,6 @@ package cli;
 
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.concurrent.Callable;
 
 /**
  * Exception thrown when there is an error parsing an inputted value.
@@ -41,14 +40,7 @@ interface ScannerReaderLambda {
 /**
  * Model CLI superclass for managing a database model.
  */
-public abstract class ModelCli implements Callable<Integer> {
-
-    // TODO: what to do with this?????????????
-    @Override
-    public Integer call() {
-        System.out.println("Cannot call directly");
-        return 1;
-    }
+public abstract class ModelCli {
 
     /**
      * For repeatedly prompting, parsing, and validating an input value from a user.
