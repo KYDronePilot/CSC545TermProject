@@ -7,6 +7,7 @@ import java.util.Scanner;
 import models.FoodItem;
 import models.Recipe;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * CLI for managing recipes.
@@ -202,6 +203,26 @@ class RecipeCli extends ModelCli {
             recipe.get().delete();
         } catch (SQLException e) {
             System.out.println(e);
+        }
+        return 0;
+    }
+
+    @Command(name = "search", description = "Search for a recipe")
+    int search(
+        @Option(
+            names = "-i",
+            description = "Ingredient filter string",
+            defaultValue = ""
+        ) String ingredient,
+        @Option(
+            names = "-c",
+            description = "Category filter string",
+            defaultValue = ""
+        ) String category
+    ) {
+        if (ingredient.equals("") && category.equals("")) {
+            System.err.println("Must provide one of [-c] or [-i] options");
+            return 1;
         }
         return 0;
     }
