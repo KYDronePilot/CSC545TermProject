@@ -188,7 +188,12 @@ class RecipeCli extends ModelCli {
                     scanner
                 );
                 var recipeInstructions = validatedMultilineString(
-                    "Enter the recipe instructions (\"...\"):\n", // TODO: Maybe something better than ...
+                    String.format(
+                        "Enter the recipe instructions (\"%s...\"):\n",
+                        recipeVal.instructions
+                            .substring(0, Math.min(20, recipeVal.instructions.length()))
+                            .replace("\n", "\\n")
+                    ),
                     false,
                     scanner
                 );
