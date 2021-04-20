@@ -63,11 +63,11 @@ class FoodItemCli extends ModelCli {
                             item.name,
                             item.foodGroup,
                             String.valueOf(item.units),
-                            "Run `get` sub-command for more info",
+                            "Run `food get` for more info",
                         }
                     );
                 }
-                System.out.println(table.toString());
+                System.out.println(table);
                 return 0;
             }
         );
