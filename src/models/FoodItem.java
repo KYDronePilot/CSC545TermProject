@@ -11,7 +11,7 @@ import utils.ModelHelper;
 public class FoodItem implements Comparable<FoodItem> {
 
     // Names of columns (excluding id)
-    public static String[] columns = { "name", "nutritionFactsId", "foodGroup" };
+    public static String[] columns = { "name", "nutritionFactsId", "foodGroup", "units" };
 
     public Integer id;
     public String name;
@@ -69,7 +69,7 @@ public class FoodItem implements Comparable<FoodItem> {
         String name,
         Integer nutritionFactsId,
         String foodGroup,
-        int units
+        Integer units
     )
         throws SQLException {
         var db = Database.getInstance();
