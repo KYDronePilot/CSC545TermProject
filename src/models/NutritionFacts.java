@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import utils.ModelHelper;
 
-public class NutritionFacts {
+public class NutritionFacts implements Comparable<NutritionFacts> {
 
-    public int id;
-    public int calories;
-    public int sugar;
-    public int protein;
-    public int sodium;
-    public int fat;
+    public Integer id;
+    public Integer calories;
+    public Integer sugar;
+    public Integer protein;
+    public Integer sodium;
+    public Integer fat;
 
     public NutritionFacts(int id, int calories, int sugar, int protein, int sodium, int fat) {
         this.id = id;
@@ -99,5 +99,10 @@ public class NutritionFacts {
 
     public void delete() throws SQLException {
         ModelHelper.delete(id, "NutritionFacts");
+    }
+
+    @Override
+    public int compareTo(NutritionFacts that) {
+        return this.id.compareTo(that.id);
     }
 }

@@ -14,10 +14,10 @@ class FoodItemCli extends ModelCli {
     int add() {
         return userInteraction(
             scanner -> {
-                var foodName = validatedString("Enter the food name: ", 50, true, scanner);
-                var foodGroup = validatedString("Enter the food group: ", 30, true, scanner);
-                var foodUnits = validatedPositiveInt(
-                    "Enter the number of units of this food (default: 0): ",
+                var name = validatedString("Enter the food name: ", 50, true, scanner);
+                var group = validatedString("Enter the food group: ", 30, true, scanner);
+                var units = validatedPositiveInt(
+                    "Enter the number of units you currently have (default: 0): ",
                     false,
                     scanner
                 );
@@ -38,10 +38,10 @@ class FoodItemCli extends ModelCli {
                     fat.get()
                 );
                 FoodItem.create(
-                    foodName.get(),
+                    name.get(),
                     newNutritionFacts.id,
-                    foodGroup.get(),
-                    foodUnits.isPresent() ? foodUnits.get() : 0
+                    group.get(),
+                    units.isPresent() ? units.get() : 0
                 );
                 return 0;
             }

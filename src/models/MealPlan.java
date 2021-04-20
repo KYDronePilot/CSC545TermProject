@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import utils.ModelHelper;
 
-public class MealPlan {
+public class MealPlan implements Comparable<MealPlan> {
 
     public Integer id;
     public String name;
@@ -75,5 +75,10 @@ public class MealPlan {
 
     public void delete() throws SQLException {
         ModelHelper.delete(id, "MealPlan");
+    }
+
+    @Override
+    public int compareTo(MealPlan that) {
+        return this.id.compareTo(that.id);
     }
 }

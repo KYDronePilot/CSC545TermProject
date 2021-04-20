@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import utils.ModelHelper;
 
-public class Recipe {
+public class Recipe implements Comparable<Recipe> {
 
-    public int id;
+    public Integer id;
     public String name;
     public String instructions;
     public String category;
@@ -100,5 +100,10 @@ public class Recipe {
                 stmt.setInt(1, id);
             }
         );
+    }
+
+    @Override
+    public int compareTo(Recipe that) {
+        return this.id.compareTo(that.id);
     }
 }

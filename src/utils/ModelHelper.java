@@ -5,6 +5,7 @@ import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Object that contains another object.
@@ -71,7 +72,7 @@ public class ModelHelper {
      * @return new model class instance
      * @throws SQLException if error executing SQL
      */
-    public static <T> ArrayList<T> filter(
+    public static <T extends Comparable<T>> ArrayList<T> filter(
         String sql,
         ThrowingConsumer<PreparedStatement, SQLException> setValues,
         ConstructInstanceLambda<T> constructInstance
@@ -89,6 +90,7 @@ public class ModelHelper {
             },
             setValues
         );
+        Collections.sort(results);
         return results;
     }
 
