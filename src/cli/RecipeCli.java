@@ -171,7 +171,7 @@ class RecipeCli extends ModelCli {
                     scanner
                 );
                 var recipeInstructions = validatedMultilineString(
-                    "Enter the recipe instructions (\"...\"):\n",
+                    "Enter the recipe instructions (\"...\"):\n", // TODO: Maybe something better than ...
                     false,
                     scanner
                 );

@@ -44,7 +44,7 @@ class MealPlanCli extends ModelCli {
                 stmt.setInt(1, mealPlanId);
             }
         );
-        System.out.print(getRecipeList());
+        System.out.println(getRecipeList());
         while (true) {
             // Get meal info
             var meal = validatedString(
@@ -80,6 +80,7 @@ class MealPlanCli extends ModelCli {
         return userInteraction(
             scanner -> {
                 var mealPlanName = validatedString("Enter the meal plan name: ", 20, true, scanner);
+                // TODO: error if day already in DB
                 var mealPlanDay = validatedString(
                     "Enter the meal plan day of week ('mon', 'tue', 'wed', etc.): ",
                     3,
@@ -105,7 +106,7 @@ class MealPlanCli extends ModelCli {
                             String.valueOf(item.id),
                             item.name,
                             item.day,
-                            "Run `get` sub-command for more info",
+                            "Run `meals get` for more info",
                         }
                     );
                 }
@@ -184,6 +185,9 @@ class MealPlanCli extends ModelCli {
                     mealPlanVal.day = mealPlanDay.get();
                 }
                 mealPlanVal.update();
+                System.out.println(
+                    "Please enter the meals for this meal plan (old ones have been deleted)"
+                );
                 updateMeals(scanner, mealPlanVal.id);
                 return 0;
             }
