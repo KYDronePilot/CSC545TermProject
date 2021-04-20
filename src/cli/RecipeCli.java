@@ -3,7 +3,6 @@ package cli;
 import database.Database;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.Scanner;
 import models.FoodItem;
 import models.Recipe;
 import picocli.CommandLine.Command;

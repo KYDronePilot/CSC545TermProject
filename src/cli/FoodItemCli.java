@@ -1,7 +1,5 @@
 package cli;
 
-import java.sql.SQLException;
-import java.util.Scanner;
 import models.FoodItem;
 import models.NutritionFacts;
 import picocli.CommandLine.Command;
@@ -36,7 +34,7 @@ class FoodItemCli extends ModelCli {
                     sodium.get(),
                     fat.get()
                 );
-                var newItem = FoodItem.create(
+                FoodItem.create(
                     foodName.get(),
                     newNutritionFacts.id,
                     foodGroup.get(),
