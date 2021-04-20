@@ -1,7 +1,9 @@
 package cli;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -113,6 +115,36 @@ class InputValidators {
                     return Optional.of(
                         String.format("Value must be one of %s", possibleValues.toString())
                     );
+                }
+                return Optional.empty();
+            },
+        };
+    }
+
+    /**
+     * Validate that each integer is unique and is in a list of possible values.
+     *
+     * @return error message if there's an issue, else `Optional.empty()`
+     */
+    @SuppressWarnings("unchecked")
+    protected static ValidateInputLambda<List<Integer>>[] eachPossibleIntegerValidator(
+        List<Integer> possibleValues
+    ) {
+        return new ValidateInputLambda[] {
+            value -> {
+                List<Integer> valuesInt = (List<Integer>) value;
+                // Make sure they are all unique
+                var hs = new HashSet<Integer>(valuesInt);
+                if (hs.size() < valuesInt.size()) {
+                    return Optional.of("Duplicate values not allowed");
+                }
+                // Make sure each value is valid
+                for (var intValue : valuesInt) {
+                    if (!possibleValues.contains(intValue)) {
+                        return Optional.of(
+                            String.format("Each value must be one of %s", possibleValues.toString())
+                        );
+                    }
                 }
                 return Optional.empty();
             },
@@ -372,6 +404,44 @@ public abstract class ModelCli {
                 } catch (NumberFormatException e) {
                     throw new ArgumentParsingException("Not an integer");
                 }
+            },
+            required,
+            scanner,
+            readerScanner -> {
+                return readerScanner.nextLine();
+            }
+        );
+    }
+
+    /**
+     * Validated comma-separated integer input that can only be certain values.
+     *
+     * @param prompt to ask user for input
+     * @param possibleValues possible values of the integer
+     * @param required whether this input can be left blank (user just hits enter)
+     * @param scanner Scanner instance to read input
+     * @return validated int input if valid one given, else Optional.empty()
+     */
+    protected Optional<List<Integer>> validatedCommaSepPossibleInt(
+        String prompt,
+        List<Integer> possibleValues,
+        boolean required,
+        Scanner scanner
+    ) {
+        return validatedInput(
+            prompt,
+            InputValidators.eachPossibleIntegerValidator(possibleValues),
+            value -> {
+                var splitValues = value.split(",");
+                var valueList = new ArrayList<Integer>();
+                try {
+                    for (var item : splitValues) {
+                        valueList.add(Integer.parseInt(item.strip()));
+                    }
+                } catch (NumberFormatException e) {
+                    throw new ArgumentParsingException("Item not an integer");
+                }
+                return valueList;
             },
             required,
             scanner,

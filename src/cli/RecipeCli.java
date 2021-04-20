@@ -2,6 +2,8 @@ package cli;
 
 import database.Database;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import models.FoodItem;
 import models.Recipe;
 import picocli.CommandLine.Command;
@@ -17,10 +19,11 @@ class RecipeCli extends ModelCli {
      * Link a list of ingredients to a particular recipe.
      *
      * @param recipeId to link ingredients to
-     * @param rawIngredients comma-separated list of ingredient IDs
+     * @param ingredientIds list of ingredient IDs
      * @throws SQLException if error executing query
      */
-    private void saveIngredients(Integer recipeId, String rawIngredients) throws SQLException {
+    private void saveIngredients(Integer recipeId, List<Integer> ingredientIds)
+        throws SQLException {
         var db = Database.getInstance();
         // Delete any existing ingredients for recipe
         db.modify(
@@ -30,9 +33,7 @@ class RecipeCli extends ModelCli {
             }
         );
         // Create new M2M ingredient links for recipe
-        var splitIngredients = rawIngredients.split(",");
-        for (var ingredient : splitIngredients) {
-            var ingredientId = Integer.parseInt(ingredient.strip());
+        for (var ingredientId : ingredientIds) {
             db.modify(
                 "insert into RecipeFoodItem (recipeId, foodItemId) values (?, ?)",
                 stmt -> {
@@ -43,11 +44,24 @@ class RecipeCli extends ModelCli {
         }
     }
 
+    private List<Integer> getIngredientIds() throws SQLException {
+        var idList = new ArrayList<Integer>();
+        var db = Database.getInstance();
+        db.select(
+            "select id from FoodItem",
+            rs -> {
+                idList.add(rs.getInt("id"));
+            }
+        );
+        return idList;
+    }
+
     @Command(name = "add", description = "Add a Recipe")
     int add() {
         return userInteraction(
             scanner -> {
                 var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
+                var possibleIngredientIds = getIngredientIds();
                 var recipeName = validatedString("Enter recipe name: ", 100, true, scanner);
                 var recipeCategory = validatedString(
                     "Enter the recipe category: ",
@@ -59,8 +73,9 @@ class RecipeCli extends ModelCli {
                 for (var ingredient : ingredients) {
                     System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
                 }
-                var recipeIngredientIds = validatedString(
+                var ingredientIds = validatedCommaSepPossibleInt(
                     "Enter comma-separated IDs of ingredients used in this recipe: ",
+                    possibleIngredientIds,
                     true,
                     scanner
                 );
@@ -75,7 +90,7 @@ class RecipeCli extends ModelCli {
                     recipeInstructions.get(),
                     recipeCategory.get()
                 );
-                saveIngredients(newItem.id, recipeIngredientIds.get());
+                saveIngredients(newItem.id, ingredientIds.get());
                 return 0;
             }
         );
@@ -132,6 +147,7 @@ class RecipeCli extends ModelCli {
         return userInteraction(
             scanner -> {
                 var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
+                var possibleIngredientIds = getIngredientIds();
                 var recipeId = validatedPositiveInt(
                     "Enter the recipe ID to update: ",
                     true,
@@ -165,8 +181,9 @@ class RecipeCli extends ModelCli {
                 for (var ingredient : ingredients) {
                     System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
                 }
-                var recipeIngredientIds = validatedString(
-                    "Enter comma-separated IDs of ingredients used in this recipe: ",
+                var ingredientIds = validatedCommaSepPossibleInt(
+                    "Enter comma-separated IDs of ingredients used in this recipe (old ingredients have been removed): ",
+                    possibleIngredientIds,
                     true,
                     scanner
                 );
@@ -180,7 +197,7 @@ class RecipeCli extends ModelCli {
                 }
                 System.out.println("Saving to DB...");
                 recipeVal.update();
-                saveIngredients(recipeVal.id, recipeIngredientIds.get());
+                saveIngredients(recipeVal.id, ingredientIds.get());
                 return 0;
             }
         );
