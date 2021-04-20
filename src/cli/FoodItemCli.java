@@ -195,7 +195,9 @@ class FoodItemCli extends ModelCli {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
+                var nutritionFacts = foodItem.get().getNutritionFacts();
                 foodItem.get().delete();
+                nutritionFacts.delete();
                 return 0;
             }
         );
