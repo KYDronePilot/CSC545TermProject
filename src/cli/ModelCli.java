@@ -98,6 +98,28 @@ class InputValidators {
     }
 
     /**
+     * Validate that an integer is in a list of possible values.
+     *
+     * @return error message if there's an issue, else `Optional.empty()`
+     */
+    @SuppressWarnings("unchecked")
+    protected static ValidateInputLambda<Integer>[] possibleIntegerValidator(
+        List<Integer> possibleValues
+    ) {
+        return new ValidateInputLambda[] {
+            value -> {
+                Integer valueInt = (Integer) value;
+                if (!possibleValues.contains(valueInt)) {
+                    return Optional.of(
+                        String.format("Value must be one of %s", possibleValues.toString())
+                    );
+                }
+                return Optional.empty();
+            },
+        };
+    }
+
+    /**
      * Validate that a string input is a day of week abbreviation.
      *
      * @return error message if there's an issue, else `Optional.empty()`
@@ -356,6 +378,29 @@ public abstract class ModelCli {
             readerScanner -> {
                 return readerScanner.nextLine();
             }
+        );
+    }
+
+    /**
+     * Specialized validated input for reading integers that must be in a list of possible values.
+     *
+     * @param prompt to ask user for input
+     * @param possibleValues possible values of the integer
+     * @param required whether this input can be left blank (user just hits enter)
+     * @param scanner Scanner instance to read input
+     * @return validated int input if valid one given, else Optional.empty()
+     */
+    protected Optional<Integer> validatedPossibleInt(
+        String prompt,
+        List<Integer> possibleValues,
+        boolean required,
+        Scanner scanner
+    ) {
+        return validatedInt(
+            prompt,
+            InputValidators.possibleIntegerValidator(possibleValues),
+            required,
+            scanner
         );
     }
 

@@ -32,6 +32,24 @@ class MealPlanCli extends ModelCli {
     }
 
     /**
+     * Get a list of all recipe IDs in the system.
+     *
+     * @return recipe ID list
+     * @throws SQLException if error executing SQL query
+     */
+    private List<Integer> getRecipeIdList() throws SQLException {
+        var idList = new ArrayList<Integer>();
+        var db = Database.getInstance();
+        db.select(
+            "select id from recipe",
+            rs -> {
+                idList.add(rs.getInt("id"));
+            }
+        );
+        return idList;
+    }
+
+    /**
      * Delete any existing meals for a meal plan and prompt the user to enter in more.
      *
      * @param scanner active System.in reader
@@ -40,6 +58,7 @@ class MealPlanCli extends ModelCli {
      */
     private void updateMeals(Scanner scanner, Integer mealPlanId) throws SQLException {
         var db = Database.getInstance();
+        var recipeIds = getRecipeIdList();
         // Delete any existing meals
         db.modify(
             "delete from RecipeMealPlan where mealPlanId = ?",
@@ -56,8 +75,9 @@ class MealPlanCli extends ModelCli {
                 true,
                 scanner
             );
-            var recipeId = validatedPositiveInt(
+            var recipeId = validatedPossibleInt(
                 "Enter the ID of the recipe for this meal: ",
+                recipeIds,
                 true,
                 scanner
             );
