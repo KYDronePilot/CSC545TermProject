@@ -76,6 +76,24 @@ class InputValidators {
             },
         };
     }
+
+    /**
+     * Validate that an integer is positive.
+     *
+     * @return error message if there's an issue, else `Optional.empty()`
+     */
+    @SuppressWarnings("unchecked")
+    protected static ValidateInputLambda<Integer>[] positiveIntegerValidator() {
+        return new ValidateInputLambda[] {
+            value -> {
+                Integer valueInt = (Integer) value;
+                if (valueInt < 0) {
+                    return Optional.of("Integer must be positive");
+                }
+                return Optional.empty();
+            },
+        };
+    }
 }
 
 /**
@@ -253,7 +271,7 @@ public abstract class ModelCli {
      * @param validators validation functions to run on the parsed input
      * @param required whether this input can be left blank (user just hits enter)
      * @param scanner Scanner instance to read input
-     * @return validated string input if valid one given, else Optional.empty()
+     * @return validated int input if valid one given, else Optional.empty()
      */
     protected Optional<Integer> validatedInt(
         String prompt,
@@ -264,6 +282,37 @@ public abstract class ModelCli {
         return validatedInput(
             prompt,
             validators,
+            value -> {
+                try {
+                    return Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    throw new ArgumentParsingException("Not an integer");
+                }
+            },
+            required,
+            scanner,
+            readerScanner -> {
+                return readerScanner.nextLine();
+            }
+        );
+    }
+
+    /**
+     * Specialized validated input for reading positive integers.
+     *
+     * @param prompt to ask user for input
+     * @param required whether this input can be left blank (user just hits enter)
+     * @param scanner Scanner instance to read input
+     * @return validated int input if valid one given, else Optional.empty()
+     */
+    protected Optional<Integer> validatedPositiveInt(
+        String prompt,
+        boolean required,
+        Scanner scanner
+    ) {
+        return validatedInput(
+            prompt,
+            InputValidators.positiveIntegerValidator(),
             value -> {
                 try {
                     return Integer.parseInt(value);

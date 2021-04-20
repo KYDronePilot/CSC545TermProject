@@ -16,17 +16,20 @@ class FoodItemCli extends ModelCli {
             scanner -> {
                 var foodName = validatedString("Enter the food name: ", 50, true, scanner);
                 var foodGroup = validatedString("Enter the food group: ", 30, true, scanner);
-                var foodUnits = validatedInt(
+                var foodUnits = validatedPositiveInt(
                     "Enter the number of units of this food (default: 0): ",
-                    null,
                     false,
                     scanner
                 );
-                var calories = validatedInt("Enter the number of calories: ", null, true, scanner);
-                var sugar = validatedInt("Enter the number of sugar: ", null, true, scanner);
-                var protein = validatedInt("Enter the number of protein: ", null, true, scanner);
-                var sodium = validatedInt("Enter the number of sodium: ", null, true, scanner);
-                var fat = validatedInt("Enter the number of fat: ", null, true, scanner);
+                var calories = validatedPositiveInt(
+                    "Enter the number of calories: ",
+                    true,
+                    scanner
+                );
+                var sugar = validatedPositiveInt("Enter the number of sugar: ", true, scanner);
+                var protein = validatedPositiveInt("Enter the number of protein: ", true, scanner);
+                var sodium = validatedPositiveInt("Enter the number of sodium: ", true, scanner);
+                var fat = validatedPositiveInt("Enter the number of fat: ", true, scanner);
                 var newNutritionFacts = NutritionFacts.create(
                     calories.get(),
                     sugar.get(),
@@ -74,7 +77,7 @@ class FoodItemCli extends ModelCli {
     int get() {
         return userInteraction(
             scanner -> {
-                var foodId = validatedInt("Enter the food ID to get: ", null, true, scanner);
+                var foodId = validatedPositiveInt("Enter the food ID to get: ", true, scanner);
                 var foodItem = FoodItem.get(foodId.get());
                 if (foodItem.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
@@ -100,7 +103,7 @@ class FoodItemCli extends ModelCli {
     int update() {
         return userInteraction(
             scanner -> {
-                var foodId = validatedInt("Enter the food ID to update: ", null, true, scanner);
+                var foodId = validatedPositiveInt("Enter the food ID to update: ", true, scanner);
                 var foodItem = FoodItem.get(foodId.get());
                 if (foodItem.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
@@ -126,9 +129,8 @@ class FoodItemCli extends ModelCli {
                 if (foodGroup.isPresent()) {
                     foodItemVal.foodGroup = foodGroup.get();
                 }
-                var units = validatedInt(
+                var units = validatedPositiveInt(
                     String.format("Enter the food units (\"%s\"): ", foodItemVal.units),
-                    null,
                     false,
                     scanner
                 );
@@ -136,45 +138,40 @@ class FoodItemCli extends ModelCli {
                     foodItemVal.units = units.get();
                 }
 
-                var calories = validatedInt(
+                var calories = validatedPositiveInt(
                     String.format("Enter the number of calories (%s): ", nutritionFacts.calories),
-                    null,
                     false,
                     scanner
                 );
                 if (calories.isPresent()) {
                     nutritionFacts.calories = calories.get();
                 }
-                var sugar = validatedInt(
+                var sugar = validatedPositiveInt(
                     String.format("Enter the number of sugar (%s): ", nutritionFacts.sugar),
-                    null,
                     false,
                     scanner
                 );
                 if (sugar.isPresent()) {
                     nutritionFacts.sugar = sugar.get();
                 }
-                var protein = validatedInt(
+                var protein = validatedPositiveInt(
                     String.format("Enter the number of protein (%s): ", nutritionFacts.protein),
-                    null,
                     false,
                     scanner
                 );
                 if (protein.isPresent()) {
                     nutritionFacts.protein = protein.get();
                 }
-                var sodium = validatedInt(
+                var sodium = validatedPositiveInt(
                     String.format("Enter the number of sodium (%s): ", nutritionFacts.sodium),
-                    null,
                     false,
                     scanner
                 );
                 if (sodium.isPresent()) {
                     nutritionFacts.sodium = sodium.get();
                 }
-                var fat = validatedInt(
+                var fat = validatedPositiveInt(
                     String.format("Enter the number of fat (%s): ", nutritionFacts.fat),
-                    null,
                     false,
                     scanner
                 );
@@ -192,7 +189,7 @@ class FoodItemCli extends ModelCli {
     int delete() {
         return userInteraction(
             scanner -> {
-                var foodId = validatedInt("Enter the food ID to delete: ", null, true, scanner);
+                var foodId = validatedPositiveInt("Enter the food ID to delete: ", true, scanner);
                 var foodItem = FoodItem.get(foodId.get());
                 if (foodItem.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");

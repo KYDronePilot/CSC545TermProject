@@ -109,7 +109,7 @@ class RecipeCli extends ModelCli {
     int get() {
         return userInteraction(
             scanner -> {
-                var foodId = validatedInt("Enter the recipe ID to get: ", null, true, scanner);
+                var foodId = validatedPositiveInt("Enter the recipe ID to get: ", true, scanner);
                 var recipe = Recipe.get(foodId.get());
                 if (recipe.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
@@ -135,7 +135,11 @@ class RecipeCli extends ModelCli {
             scanner -> {
                 var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
                 Collections.sort(ingredients);
-                var recipeId = validatedInt("Enter the recipe ID to update: ", null, true, scanner);
+                var recipeId = validatedPositiveInt(
+                    "Enter the recipe ID to update: ",
+                    true,
+                    scanner
+                );
                 var recipe = Recipe.get(recipeId.get());
                 if (recipe.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
@@ -189,7 +193,11 @@ class RecipeCli extends ModelCli {
     int delete() {
         return userInteraction(
             scanner -> {
-                var recipeId = validatedInt("Enter the recipe ID to delete: ", null, true, scanner);
+                var recipeId = validatedPositiveInt(
+                    "Enter the recipe ID to delete: ",
+                    true,
+                    scanner
+                );
                 var recipe = FoodItem.get(recipeId.get());
                 if (recipe.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");

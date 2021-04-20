@@ -53,9 +53,8 @@ class MealPlanCli extends ModelCli {
                 true,
                 scanner
             );
-            var recipeId = validatedInt(
+            var recipeId = validatedPositiveInt(
                 "Enter the ID of the recipe for this meal: ",
-                null,
                 true,
                 scanner
             );
@@ -120,9 +119,8 @@ class MealPlanCli extends ModelCli {
     int get() {
         return userInteraction(
             scanner -> {
-                var mealPlanId = validatedInt(
+                var mealPlanId = validatedPositiveInt(
                     "Enter the meal plan ID to get: ",
-                    null,
                     true,
                     scanner
                 );
@@ -156,9 +154,8 @@ class MealPlanCli extends ModelCli {
     int update() {
         return userInteraction(
             scanner -> {
-                var mealPlanId = validatedInt(
+                var mealPlanId = validatedPositiveInt(
                     "Enter the meal plan ID to update: ",
-                    null,
                     true,
                     scanner
                 );
@@ -197,9 +194,8 @@ class MealPlanCli extends ModelCli {
     int delete() {
         return userInteraction(
             scanner -> {
-                var mealPlanId = validatedInt(
+                var mealPlanId = validatedPositiveInt(
                     "Enter the meal plan ID to delete: ",
-                    null,
                     true,
                     scanner
                 );
