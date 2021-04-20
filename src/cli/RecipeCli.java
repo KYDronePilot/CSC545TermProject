@@ -2,7 +2,6 @@ package cli;
 
 import database.Database;
 import java.sql.SQLException;
-import java.util.Collections;
 import models.FoodItem;
 import models.Recipe;
 import picocli.CommandLine.Command;
@@ -49,7 +48,6 @@ class RecipeCli extends ModelCli {
         return userInteraction(
             scanner -> {
                 var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
-                Collections.sort(ingredients);
                 var recipeName = validatedString("Enter recipe name: ", 100, true, scanner);
                 var recipeCategory = validatedString(
                     "Enter the recipe category: ",
@@ -62,12 +60,12 @@ class RecipeCli extends ModelCli {
                     System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
                 }
                 var recipeIngredientIds = validatedString(
-                    "Enter comma-separated IDs of ingredients used in recipe: ",
+                    "Enter comma-separated IDs of ingredients used in this recipe: ",
                     true,
                     scanner
                 );
                 var recipeInstructions = validatedMultilineString(
-                    "Enter recipe instructions (type \"/<return>\" on an empty line to denote the end):\n",
+                    "Enter recipe instructions (type \"/<return>\" on a blank line to denote the end):\n",
                     true,
                     scanner
                 );
@@ -95,7 +93,7 @@ class RecipeCli extends ModelCli {
                             String.valueOf(item.id),
                             item.name,
                             item.category,
-                            "Run `get` sub-command for more info",
+                            "Run `recipe get` for more info",
                         }
                     );
                 }
@@ -134,7 +132,6 @@ class RecipeCli extends ModelCli {
         return userInteraction(
             scanner -> {
                 var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
-                Collections.sort(ingredients);
                 var recipeId = validatedPositiveInt(
                     "Enter the recipe ID to update: ",
                     true,
@@ -161,18 +158,18 @@ class RecipeCli extends ModelCli {
                     false,
                     scanner
                 );
+                if (recipeCategory.isPresent()) {
+                    recipeVal.category = recipeCategory.get();
+                }
                 System.out.println("The following are all available recipe ingredients:");
                 for (var ingredient : ingredients) {
                     System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
                 }
                 var recipeIngredientIds = validatedString(
-                    "Enter comma-separated IDs of ingredients used in recipe: ",
+                    "Enter comma-separated IDs of ingredients used in this recipe: ",
                     true,
                     scanner
                 );
-                if (recipeCategory.isPresent()) {
-                    recipeVal.category = recipeCategory.get();
-                }
                 var recipeInstructions = validatedMultilineString(
                     "Enter the recipe instructions (\"...\"):\n",
                     false,
