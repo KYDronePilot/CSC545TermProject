@@ -2,6 +2,9 @@ package cli;
 
 import database.Database;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import models.MealPlan;
 import models.Recipe;
@@ -75,15 +78,57 @@ class MealPlanCli extends ModelCli {
         }
     }
 
+    /**
+     * Validated input of a string day of week.
+     *
+     * @param takenDays list of days that already have meal plans
+     */
+    private Optional<String> validatedDayOfWeek(
+        String prompt,
+        List<String> takenDays,
+        boolean required,
+        Scanner scanner
+    ) {
+        return validatedInput(
+            prompt,
+            InputValidators.dayOfWeekValidator(takenDays),
+            value -> {
+                return value;
+            },
+            required,
+            scanner,
+            readerScanner -> {
+                return readerScanner.nextLine();
+            }
+        );
+    }
+
+    /**
+     * Get a list of days of the week that already have a meal plan.
+     *
+     * @return days of the week that already have a meal plan
+     */
+    private List<String> getTakenDays() throws SQLException {
+        var takenDays = new ArrayList<String>();
+        var db = Database.getInstance();
+        db.select(
+            "select day from MealPlan",
+            rs -> {
+                takenDays.add(rs.getString("day"));
+            }
+        );
+        return takenDays;
+    }
+
     @Command(name = "add", description = "Add a meal plan")
     int add() {
         return userInteraction(
             scanner -> {
+                var takenDays = getTakenDays();
                 var mealPlanName = validatedString("Enter the meal plan name: ", 20, true, scanner);
-                // TODO: error if day already in DB
-                var mealPlanDay = validatedString(
+                var mealPlanDay = validatedDayOfWeek(
                     "Enter the meal plan day of week ('mon', 'tue', 'wed', etc.): ",
-                    3,
+                    takenDays,
                     true,
                     scanner
                 );
@@ -166,6 +211,7 @@ class MealPlanCli extends ModelCli {
                     return 1;
                 }
                 var mealPlanVal = mealPlan.get();
+                var takenDays = getTakenDays();
                 var mealPlanName = validatedString(
                     String.format("Enter the meal plan name (\"%s\"): ", mealPlanVal.name),
                     20,
@@ -175,9 +221,9 @@ class MealPlanCli extends ModelCli {
                 if (mealPlanName.isPresent()) {
                     mealPlanVal.name = mealPlanName.get();
                 }
-                var mealPlanDay = validatedString(
-                    String.format("Enter the meal plan day (\"%s\"): ", mealPlanVal.day),
-                    3,
+                var mealPlanDay = validatedDayOfWeek(
+                    String.format("Enter the meal plan day of week (\"%s\"): ", mealPlanVal.day),
+                    takenDays,
                     false,
                     scanner
                 );

@@ -1,6 +1,8 @@
 package cli;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -89,6 +91,35 @@ class InputValidators {
                 Integer valueInt = (Integer) value;
                 if (valueInt < 0) {
                     return Optional.of("Integer must be positive");
+                }
+                return Optional.empty();
+            },
+        };
+    }
+
+    /**
+     * Validate that a string input is a day of week abbreviation.
+     *
+     * @return error message if there's an issue, else `Optional.empty()`
+     */
+    @SuppressWarnings("unchecked")
+    protected static ValidateInputLambda<String>[] dayOfWeekValidator(List<String> takenDays) {
+        return new ValidateInputLambda[] {
+            value -> {
+                String valueString = (String) value;
+                if (
+                    !Arrays
+                        .asList("mon", "tue", "wed", "thu", "fri", "sat", "sun")
+                        .contains(valueString)
+                ) {
+                    return Optional.of(
+                        "Value must be one of ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')"
+                    );
+                }
+                if (takenDays.contains(valueString)) {
+                    return Optional.of(
+                        String.format("Day \"%s\" already has a meal plan", valueString)
+                    );
                 }
                 return Optional.empty();
             },
