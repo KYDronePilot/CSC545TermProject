@@ -50,25 +50,14 @@ class RecipeCli extends ModelCli {
         try (var scanner = new Scanner(System.in)) {
             var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
             Collections.sort(ingredients);
-            var recipeName = validatedString(
-                "Enter recipe name: ",
-                maxLengthValidator(20),
-                true,
-                scanner
-            );
-            var recipeCategory = validatedString(
-                "Enter the recipe category: ",
-                maxLengthValidator(20),
-                true,
-                scanner
-            );
+            var recipeName = validatedString("Enter recipe name: ", 100, true, scanner);
+            var recipeCategory = validatedString("Enter the recipe category: ", 60, true, scanner);
             System.out.println("The following are all available recipe ingredients:");
             for (var ingredient : ingredients) {
                 System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
             }
             var recipeIngredientIds = validatedString(
                 "Enter comma-separated IDs of ingredients used in recipe: ",
-                null,
                 true,
                 scanner
             );
@@ -148,7 +137,7 @@ class RecipeCli extends ModelCli {
             var recipeVal = recipe.get();
             var recipeName = validatedString(
                 String.format("Enter the recipe name (\"%s\"): ", recipeVal.name),
-                maxLengthValidator(20),
+                100,
                 false,
                 scanner
             );
@@ -157,7 +146,7 @@ class RecipeCli extends ModelCli {
             }
             var recipeCategory = validatedString(
                 String.format("Enter the recipe category (\"%s\"): ", recipeVal.category),
-                maxLengthValidator(20),
+                60,
                 false,
                 scanner
             );
@@ -167,7 +156,6 @@ class RecipeCli extends ModelCli {
             }
             var recipeIngredientIds = validatedString(
                 "Enter comma-separated IDs of ingredients used in recipe: ",
-                null,
                 true,
                 scanner
             );

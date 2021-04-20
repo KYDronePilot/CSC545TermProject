@@ -49,7 +49,7 @@ class MealPlanCli extends ModelCli {
             // Get meal info
             var meal = validatedString(
                 "Enter the name of a meal for this plan (e.g. 'breakfast', 'lunch', etc.): ",
-                maxLengthValidator(20),
+                20,
                 true,
                 scanner
             );
@@ -79,15 +79,10 @@ class MealPlanCli extends ModelCli {
     @Command(name = "add", description = "Add a meal plan")
     int add() {
         try (var scanner = new Scanner(System.in)) {
-            var mealPlanName = validatedString(
-                "Enter the meal plan name: ",
-                maxLengthValidator(20),
-                true,
-                scanner
-            );
+            var mealPlanName = validatedString("Enter the meal plan name: ", 20, true, scanner);
             var mealPlanDay = validatedString(
                 "Enter the meal plan day of week ('mon', 'tue', 'wed', etc.): ",
-                maxLengthValidator(20),
+                3,
                 true,
                 scanner
             );
@@ -167,7 +162,7 @@ class MealPlanCli extends ModelCli {
             var mealPlanVal = mealPlan.get();
             var mealPlanName = validatedString(
                 String.format("Enter the meal plan name (\"%s\"): ", mealPlanVal.name),
-                maxLengthValidator(20),
+                20,
                 false,
                 scanner
             );
@@ -176,7 +171,7 @@ class MealPlanCli extends ModelCli {
             }
             var mealPlanDay = validatedString(
                 String.format("Enter the meal plan day (\"%s\"): ", mealPlanVal.day),
-                maxLengthValidator(20),
+                3,
                 false,
                 scanner
             );

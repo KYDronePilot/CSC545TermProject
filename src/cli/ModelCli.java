@@ -135,6 +135,36 @@ public abstract class ModelCli {
     }
 
     /**
+     * Validate string input with simple length specification.
+     */
+    protected Optional<String> validatedString(
+        String prompt,
+        Integer maxLength,
+        boolean required,
+        Scanner scanner
+    ) {
+        return validatedString(prompt, maxLengthValidator(maxLength), required, scanner);
+    }
+
+    /**
+     * Validate string with no extra validation functions.
+     */
+    protected Optional<String> validatedString(String prompt, boolean required, Scanner scanner) {
+        return validatedInput(
+            prompt,
+            null,
+            value -> {
+                return value;
+            },
+            required,
+            scanner,
+            readerScanner -> {
+                return readerScanner.nextLine();
+            }
+        );
+    }
+
+    /**
      * Specialized validated input for reading multiline strings.
      *
      * @param prompt to ask user for input

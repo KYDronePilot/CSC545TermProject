@@ -15,18 +15,8 @@ class FoodItemCli extends ModelCli {
     @Command(name = "add", description = "Add a food item")
     int add() {
         try (var scanner = new Scanner(System.in)) {
-            var foodName = validatedString(
-                "Enter the food name: ",
-                maxLengthValidator(20),
-                true,
-                scanner
-            );
-            var foodGroup = validatedString(
-                "Enter the food group: ",
-                maxLengthValidator(20),
-                true,
-                scanner
-            );
+            var foodName = validatedString("Enter the food name: ", 50, true, scanner);
+            var foodGroup = validatedString("Enter the food group: ", 30, true, scanner);
             var foodUnits = validatedInt(
                 "Enter the number of units of this food (default: 0): ",
                 null,
@@ -119,7 +109,7 @@ class FoodItemCli extends ModelCli {
             var nutritionFacts = foodItemVal.getNutritionFacts();
             var foodName = validatedString(
                 String.format("Enter the food name (\"%s\"): ", foodItemVal.name),
-                maxLengthValidator(20),
+                50,
                 false,
                 scanner
             );
@@ -128,7 +118,7 @@ class FoodItemCli extends ModelCli {
             }
             var foodGroup = validatedString(
                 String.format("Enter the food group (\"%s\"): ", foodItemVal.foodGroup),
-                maxLengthValidator(20),
+                30,
                 false,
                 scanner
             );
