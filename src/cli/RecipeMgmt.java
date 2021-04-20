@@ -10,12 +10,10 @@ import picocli.CommandLine.Command;
     name = "recipe_mgmt",
     subcommands = { FoodItemCli.class, RecipeCli.class, MealPlanCli.class, ShoppingCli.class },
     mixinStandardHelpOptions = true,
-    description = "Manage recipes, meal plans, and a shopping list for items needed."
+    description = "Manage recipes, meal plans, and a shopping list for items needed.",
+    version = "1.0.0"
 )
 public class RecipeMgmt {
-
-    // @Option(names = "-v")
-    // int verbose;
 
     public static void main(String... args) {
         var exitCode = new CommandLine(new RecipeMgmt()).execute(args);
