@@ -38,6 +38,37 @@ interface ScannerReaderLambda {
 }
 
 /**
+ * Contains lambdas for input validation.
+ *
+ * Note: This was designed to work better than it actually does... Unfortunately in Java, generic
+ * arrays cannot be initialized without casting them and ignoring unchecked errors. This class of
+ * validators works, but it not as clean as the original design.
+ */
+class InputValidators {
+
+    /**
+     * Validate the max length of an input string.
+     *
+     * @param length max length to check
+     * @return error message if there's an issue, else `Optional.empty()`
+     */
+    @SuppressWarnings("unchecked")
+    protected static ValidateInputLambda<String>[] maxLengthValidator(int length) {
+        return new ValidateInputLambda[] {
+            value -> {
+                String valueString = (String) value;
+                if (valueString.length() > length) {
+                    return Optional.of(
+                        String.format("Value can only be %s characters long", length)
+                    );
+                }
+                return Optional.empty();
+            },
+        };
+    }
+}
+
+/**
  * Model CLI superclass for managing a database model.
  */
 public abstract class ModelCli {
@@ -143,7 +174,12 @@ public abstract class ModelCli {
         boolean required,
         Scanner scanner
     ) {
-        return validatedString(prompt, maxLengthValidator(maxLength), required, scanner);
+        return validatedString(
+            prompt,
+            InputValidators.maxLengthValidator(maxLength),
+            required,
+            scanner
+        );
     }
 
     /**
@@ -231,22 +267,6 @@ public abstract class ModelCli {
                 return readerScanner.nextLine();
             }
         );
-    }
-
-    // FIXME: There's a better way of doing this (static var...?)
-    @SuppressWarnings("unchecked")
-    protected ValidateInputLambda<String>[] maxLengthValidator(int length) {
-        return new ValidateInputLambda[] {
-            value -> {
-                String valueString = (String) value;
-                if (valueString.length() > length) {
-                    return Optional.of(
-                        String.format("Value can only be %s characters long", length)
-                    );
-                }
-                return Optional.empty();
-            },
-        };
     }
 
     /**
