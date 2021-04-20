@@ -47,152 +47,159 @@ class RecipeCli extends ModelCli {
 
     @Command(name = "add", description = "Add a Recipe")
     int add() {
-        try (var scanner = new Scanner(System.in)) {
-            var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
-            Collections.sort(ingredients);
-            var recipeName = validatedString("Enter recipe name: ", 100, true, scanner);
-            var recipeCategory = validatedString("Enter the recipe category: ", 60, true, scanner);
-            System.out.println("The following are all available recipe ingredients:");
-            for (var ingredient : ingredients) {
-                System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
+        return userInteraction(
+            scanner -> {
+                var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
+                Collections.sort(ingredients);
+                var recipeName = validatedString("Enter recipe name: ", 100, true, scanner);
+                var recipeCategory = validatedString(
+                    "Enter the recipe category: ",
+                    60,
+                    true,
+                    scanner
+                );
+                System.out.println("The following are all available recipe ingredients:");
+                for (var ingredient : ingredients) {
+                    System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
+                }
+                var recipeIngredientIds = validatedString(
+                    "Enter comma-separated IDs of ingredients used in recipe: ",
+                    true,
+                    scanner
+                );
+                var recipeInstructions = validatedMultilineString(
+                    "Enter recipe instructions (type \"/<return>\" on an empty line to denote the end):\n",
+                    true,
+                    scanner
+                );
+                System.out.println("Saving to DB...");
+                var newItem = Recipe.create(
+                    recipeName.get(),
+                    recipeInstructions.get(),
+                    recipeCategory.get()
+                );
+                saveIngredients(newItem.id, recipeIngredientIds.get());
+                return 0;
             }
-            var recipeIngredientIds = validatedString(
-                "Enter comma-separated IDs of ingredients used in recipe: ",
-                true,
-                scanner
-            );
-            var recipeInstructions = validatedMultilineString(
-                "Enter recipe instructions (type \"/<return>\" on an empty line to denote the end):\n",
-                true,
-                scanner
-            );
-            System.out.println("Saving to DB...");
-            var newItem = Recipe.create(
-                recipeName.get(),
-                recipeInstructions.get(),
-                recipeCategory.get()
-            );
-            saveIngredients(newItem.id, recipeIngredientIds.get());
-        } catch (SQLException e) {}
-        return 0;
+        );
     }
 
     @Command(name = "list", description = "List recipes")
     int list() {
-        try {
-            var items = Recipe.filter("select * from Recipe", stmt -> {});
-            var table = new CliTable(new String[] { "ID", "Name", "Category", "More info..." });
-            for (var item : items) {
-                table.rows.add(
-                    new String[] {
-                        String.valueOf(item.id),
-                        item.name,
-                        item.category,
-                        "Run `get` sub-command for more info",
-                    }
-                );
+        return userInteraction(
+            scanner -> {
+                var items = Recipe.filter("select * from Recipe", stmt -> {});
+                var table = new CliTable(new String[] { "ID", "Name", "Category", "More info..." });
+                for (var item : items) {
+                    table.rows.add(
+                        new String[] {
+                            String.valueOf(item.id),
+                            item.name,
+                            item.category,
+                            "Run `get` sub-command for more info",
+                        }
+                    );
+                }
+                System.out.println(table.toString());
+                return 0;
             }
-            System.out.println(table.toString());
-        } catch (SQLException e) {
-            return 1;
-        }
-        return 0;
+        );
     }
 
     @Command(name = "get", description = "Get the details of a recipe")
     int get() {
-        try (var scanner = new Scanner(System.in)) {
-            var foodId = validatedInt("Enter the recipe ID to get: ", null, true, scanner);
-            var recipe = Recipe.get(foodId.get());
-            if (recipe.isEmpty()) {
-                System.out.println("ID doesn't exist. Try again.");
-                return 1;
+        return userInteraction(
+            scanner -> {
+                var foodId = validatedInt("Enter the recipe ID to get: ", null, true, scanner);
+                var recipe = Recipe.get(foodId.get());
+                if (recipe.isEmpty()) {
+                    System.out.println("ID doesn't exist. Try again.");
+                    return 1;
+                }
+                var recipeVal = recipe.get();
+                var ingredients = recipeVal.getFoodItems();
+                System.out.printf("\nID: %s\n", recipeVal.id);
+                System.out.printf("Name: %s\n", recipeVal.name);
+                System.out.printf("Category: %s\n", recipeVal.category);
+                System.out.println("Ingredients:");
+                for (var ingredient : ingredients) {
+                    System.out.printf("  %s\n", ingredient);
+                }
+                return 0;
             }
-            var recipeVal = recipe.get();
-            var ingredients = recipeVal.getFoodItems();
-            System.out.printf("\nID: %s\n", recipeVal.id);
-            System.out.printf("Name: %s\n", recipeVal.name);
-            System.out.printf("Category: %s\n", recipeVal.category);
-            System.out.println("Ingredients:");
-            for (var ingredient : ingredients) {
-                System.out.printf("  %s\n", ingredient);
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return 0;
+        );
     }
 
     @Command(name = "update", description = "Update a recipe's information")
     int update() {
-        try (var scanner = new Scanner(System.in)) {
-            var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
-            Collections.sort(ingredients);
-            var recipeId = validatedInt("Enter the recipe ID to update: ", null, true, scanner);
-            var recipe = Recipe.get(recipeId.get());
-            if (recipe.isEmpty()) {
-                System.out.println("ID doesn't exist. Try again.");
-                return 1;
+        return userInteraction(
+            scanner -> {
+                var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
+                Collections.sort(ingredients);
+                var recipeId = validatedInt("Enter the recipe ID to update: ", null, true, scanner);
+                var recipe = Recipe.get(recipeId.get());
+                if (recipe.isEmpty()) {
+                    System.out.println("ID doesn't exist. Try again.");
+                    return 1;
+                }
+                var recipeVal = recipe.get();
+                var recipeName = validatedString(
+                    String.format("Enter the recipe name (\"%s\"): ", recipeVal.name),
+                    100,
+                    false,
+                    scanner
+                );
+                if (recipeName.isPresent()) {
+                    recipeVal.name = recipeName.get();
+                }
+                var recipeCategory = validatedString(
+                    String.format("Enter the recipe category (\"%s\"): ", recipeVal.category),
+                    60,
+                    false,
+                    scanner
+                );
+                System.out.println("The following are all available recipe ingredients:");
+                for (var ingredient : ingredients) {
+                    System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
+                }
+                var recipeIngredientIds = validatedString(
+                    "Enter comma-separated IDs of ingredients used in recipe: ",
+                    true,
+                    scanner
+                );
+                if (recipeCategory.isPresent()) {
+                    recipeVal.category = recipeCategory.get();
+                }
+                var recipeInstructions = validatedMultilineString(
+                    "Enter the recipe instructions (\"...\"):\n",
+                    false,
+                    scanner
+                );
+                if (recipeInstructions.isPresent()) {
+                    recipeVal.instructions = recipeInstructions.get();
+                }
+                System.out.println("Saving to DB...");
+                recipeVal.update();
+                saveIngredients(recipeVal.id, recipeIngredientIds.get());
+                return 0;
             }
-            var recipeVal = recipe.get();
-            var recipeName = validatedString(
-                String.format("Enter the recipe name (\"%s\"): ", recipeVal.name),
-                100,
-                false,
-                scanner
-            );
-            if (recipeName.isPresent()) {
-                recipeVal.name = recipeName.get();
-            }
-            var recipeCategory = validatedString(
-                String.format("Enter the recipe category (\"%s\"): ", recipeVal.category),
-                60,
-                false,
-                scanner
-            );
-            System.out.println("The following are all available recipe ingredients:");
-            for (var ingredient : ingredients) {
-                System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
-            }
-            var recipeIngredientIds = validatedString(
-                "Enter comma-separated IDs of ingredients used in recipe: ",
-                true,
-                scanner
-            );
-            if (recipeCategory.isPresent()) {
-                recipeVal.category = recipeCategory.get();
-            }
-            var recipeInstructions = validatedMultilineString(
-                "Enter the recipe instructions (\"...\"):\n",
-                false,
-                scanner
-            );
-            if (recipeInstructions.isPresent()) {
-                recipeVal.instructions = recipeInstructions.get();
-            }
-            System.out.println("Saving to DB...");
-            recipeVal.update();
-            saveIngredients(recipeVal.id, recipeIngredientIds.get());
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return 0;
+        );
     }
 
     @Command(name = "delete", description = "Delete a recipe")
     int delete() {
-        try (var scanner = new Scanner(System.in)) {
-            var recipeId = validatedInt("Enter the recipe ID to delete: ", null, true, scanner);
-            var recipe = FoodItem.get(recipeId.get());
-            if (recipe.isEmpty()) {
-                System.out.println("ID doesn't exist. Try again.");
-                return 1;
+        return userInteraction(
+            scanner -> {
+                var recipeId = validatedInt("Enter the recipe ID to delete: ", null, true, scanner);
+                var recipe = FoodItem.get(recipeId.get());
+                if (recipe.isEmpty()) {
+                    System.out.println("ID doesn't exist. Try again.");
+                    return 1;
+                }
+                recipe.get().delete();
+                return 0;
             }
-            recipe.get().delete();
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return 0;
+        );
     }
 
     @Command(name = "search", description = "Search for a recipe")

@@ -1,5 +1,6 @@
 package cli;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -35,6 +36,15 @@ interface CasterLambda<T> {
  */
 interface ScannerReaderLambda {
     String run(Scanner input);
+}
+
+/**
+ * Lambda function which provides an active input scanner and can throws SQL errors.
+ *
+ * For user interaction in the CLI.
+ */
+interface UserDbInteractionLambda {
+    Integer run(Scanner input) throws SQLException;
 }
 
 /**
@@ -267,6 +277,20 @@ public abstract class ModelCli {
                 return readerScanner.nextLine();
             }
         );
+    }
+
+    /**
+     * For handling user interaction with System.in and the DB.
+     *
+     * @param interactionHandler lambda which handles user interaction
+     */
+    protected Integer userInteraction(UserDbInteractionLambda interactionHandler) {
+        try (var scanner = new Scanner(System.in)) {
+            return interactionHandler.run(scanner);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 1;
+        }
     }
 
     /**

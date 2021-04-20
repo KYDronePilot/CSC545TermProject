@@ -78,132 +78,139 @@ class MealPlanCli extends ModelCli {
 
     @Command(name = "add", description = "Add a meal plan")
     int add() {
-        try (var scanner = new Scanner(System.in)) {
-            var mealPlanName = validatedString("Enter the meal plan name: ", 20, true, scanner);
-            var mealPlanDay = validatedString(
-                "Enter the meal plan day of week ('mon', 'tue', 'wed', etc.): ",
-                3,
-                true,
-                scanner
-            );
-            var newItem = MealPlan.create(mealPlanName.get(), mealPlanDay.get());
-            updateMeals(scanner, newItem.id);
-        } catch (SQLException e) {}
-        return 0;
+        return userInteraction(
+            scanner -> {
+                var mealPlanName = validatedString("Enter the meal plan name: ", 20, true, scanner);
+                var mealPlanDay = validatedString(
+                    "Enter the meal plan day of week ('mon', 'tue', 'wed', etc.): ",
+                    3,
+                    true,
+                    scanner
+                );
+                var newItem = MealPlan.create(mealPlanName.get(), mealPlanDay.get());
+                updateMeals(scanner, newItem.id);
+                return 0;
+            }
+        );
     }
 
     @Command(name = "list", description = "List meal plans")
     int list() {
-        try {
-            var items = MealPlan.filter("select * from MealPlan", stmt -> {});
-            var table = new CliTable(new String[] { "ID", "Name", "Day", "More info..." });
-            for (var item : items) {
-                table.rows.add(
-                    new String[] {
-                        String.valueOf(item.id),
-                        item.name,
-                        item.day,
-                        "Run `get` sub-command for more info",
-                    }
-                );
+        return userInteraction(
+            scanner -> {
+                var items = MealPlan.filter("select * from MealPlan", stmt -> {});
+                var table = new CliTable(new String[] { "ID", "Name", "Day", "More info..." });
+                for (var item : items) {
+                    table.rows.add(
+                        new String[] {
+                            String.valueOf(item.id),
+                            item.name,
+                            item.day,
+                            "Run `get` sub-command for more info",
+                        }
+                    );
+                }
+                System.out.println(table.toString());
+                return 0;
             }
-            System.out.println(table.toString());
-        } catch (SQLException e) {
-            return 1;
-        }
-        return 0;
+        );
     }
 
     @Command(name = "get", description = "Get the details of a meal plan")
     int get() {
-        try (var scanner = new Scanner(System.in)) {
-            var mealPlanId = validatedInt("Enter the meal plan ID to get: ", null, true, scanner);
-            var mealPlan = MealPlan.get(mealPlanId.get());
-            if (mealPlan.isEmpty()) {
-                System.out.println("ID doesn't exist. Try again.");
-                return 1;
-            }
-            var mealPlanVal = mealPlan.get();
-            System.out.printf("\nID: %s\n", mealPlanVal.id);
-            System.out.printf("Name: %s\n", mealPlanVal.name);
-            System.out.printf("Day: %s\n", mealPlanVal.day);
-            System.out.println("Meals");
-            var db = Database.getInstance();
-            // Get all meals for this meal plan
-            db.select(
-                "select rmp.meal as meal, r.name as name from Recipe r join RecipeMealPlan rmp on r.id = rmp.recipeId join MealPlan mp on rmp.mealPlanId = mp.id where mp.id = ?",
-                rs -> {
-                    System.out.printf("  %s: %s\n", rs.getString("meal"), rs.getString("name"));
-                },
-                stmt -> {
-                    stmt.setInt(1, mealPlanVal.id);
+        return userInteraction(
+            scanner -> {
+                var mealPlanId = validatedInt(
+                    "Enter the meal plan ID to get: ",
+                    null,
+                    true,
+                    scanner
+                );
+                var mealPlan = MealPlan.get(mealPlanId.get());
+                if (mealPlan.isEmpty()) {
+                    System.out.println("ID doesn't exist. Try again.");
+                    return 1;
                 }
-            );
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return 0;
+                var mealPlanVal = mealPlan.get();
+                System.out.printf("\nID: %s\n", mealPlanVal.id);
+                System.out.printf("Name: %s\n", mealPlanVal.name);
+                System.out.printf("Day: %s\n", mealPlanVal.day);
+                System.out.println("Meals");
+                var db = Database.getInstance();
+                // Get all meals for this meal plan
+                db.select(
+                    "select rmp.meal as meal, r.name as name from Recipe r join RecipeMealPlan rmp on r.id = rmp.recipeId join MealPlan mp on rmp.mealPlanId = mp.id where mp.id = ?",
+                    rs -> {
+                        System.out.printf("  %s: %s\n", rs.getString("meal"), rs.getString("name"));
+                    },
+                    stmt -> {
+                        stmt.setInt(1, mealPlanVal.id);
+                    }
+                );
+                return 0;
+            }
+        );
     }
 
     @Command(name = "update", description = "Update a meal plan's information")
     int update() {
-        try (var scanner = new Scanner(System.in)) {
-            var mealPlanId = validatedInt(
-                "Enter the meal plan ID to update: ",
-                null,
-                true,
-                scanner
-            );
-            var mealPlan = MealPlan.get(mealPlanId.get());
-            if (mealPlan.isEmpty()) {
-                System.out.println("ID doesn't exist. Try again.");
-                return 1;
+        return userInteraction(
+            scanner -> {
+                var mealPlanId = validatedInt(
+                    "Enter the meal plan ID to update: ",
+                    null,
+                    true,
+                    scanner
+                );
+                var mealPlan = MealPlan.get(mealPlanId.get());
+                if (mealPlan.isEmpty()) {
+                    System.out.println("ID doesn't exist. Try again.");
+                    return 1;
+                }
+                var mealPlanVal = mealPlan.get();
+                var mealPlanName = validatedString(
+                    String.format("Enter the meal plan name (\"%s\"): ", mealPlanVal.name),
+                    20,
+                    false,
+                    scanner
+                );
+                if (mealPlanName.isPresent()) {
+                    mealPlanVal.name = mealPlanName.get();
+                }
+                var mealPlanDay = validatedString(
+                    String.format("Enter the meal plan day (\"%s\"): ", mealPlanVal.day),
+                    3,
+                    false,
+                    scanner
+                );
+                if (mealPlanDay.isPresent()) {
+                    mealPlanVal.day = mealPlanDay.get();
+                }
+                mealPlanVal.update();
+                updateMeals(scanner, mealPlanVal.id);
+                return 0;
             }
-            var mealPlanVal = mealPlan.get();
-            var mealPlanName = validatedString(
-                String.format("Enter the meal plan name (\"%s\"): ", mealPlanVal.name),
-                20,
-                false,
-                scanner
-            );
-            if (mealPlanName.isPresent()) {
-                mealPlanVal.name = mealPlanName.get();
-            }
-            var mealPlanDay = validatedString(
-                String.format("Enter the meal plan day (\"%s\"): ", mealPlanVal.day),
-                3,
-                false,
-                scanner
-            );
-            if (mealPlanDay.isPresent()) {
-                mealPlanVal.day = mealPlanDay.get();
-            }
-            mealPlanVal.update();
-            updateMeals(scanner, mealPlanVal.id);
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return 0;
+        );
     }
 
     @Command(name = "delete", description = "Delete a meal plan")
     int delete() {
-        try (var scanner = new Scanner(System.in)) {
-            var mealPlanId = validatedInt(
-                "Enter the meal plan ID to delete: ",
-                null,
-                true,
-                scanner
-            );
-            var mealPlan = MealPlan.get(mealPlanId.get());
-            if (mealPlan.isEmpty()) {
-                System.out.println("ID doesn't exist. Try again.");
-                return 1;
+        return userInteraction(
+            scanner -> {
+                var mealPlanId = validatedInt(
+                    "Enter the meal plan ID to delete: ",
+                    null,
+                    true,
+                    scanner
+                );
+                var mealPlan = MealPlan.get(mealPlanId.get());
+                if (mealPlan.isEmpty()) {
+                    System.out.println("ID doesn't exist. Try again.");
+                    return 1;
+                }
+                mealPlan.get().delete();
+                return 0;
             }
-            mealPlan.get().delete();
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return 0;
+        );
     }
 }
