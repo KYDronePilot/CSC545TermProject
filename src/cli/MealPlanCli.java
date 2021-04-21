@@ -196,7 +196,7 @@ class MealPlanCli extends ModelCli {
                     scanner
                 );
                 Optional<MealPlan> mealPlan = MealPlan.get(mealPlanId.get());
-                if (mealPlan.isEmpty()) {
+                if (!mealPlan.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
@@ -231,7 +231,7 @@ class MealPlanCli extends ModelCli {
                     scanner
                 );
                 Optional<MealPlan> mealPlan = MealPlan.get(mealPlanId.get());
-                if (mealPlan.isEmpty()) {
+                if (!mealPlan.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
@@ -275,7 +275,7 @@ class MealPlanCli extends ModelCli {
                     scanner
                 );
                 Optional<MealPlan> mealPlan = MealPlan.get(mealPlanId.get());
-                if (mealPlan.isEmpty()) {
+                if (!mealPlan.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }

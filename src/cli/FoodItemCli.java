@@ -106,7 +106,7 @@ class FoodItemCli extends ModelCli {
                     scanner
                 );
                 Optional<FoodItem> foodItem = FoodItem.get(foodId.get());
-                if (foodItem.isEmpty()) {
+                if (!foodItem.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
@@ -136,7 +136,7 @@ class FoodItemCli extends ModelCli {
                     scanner
                 );
                 Optional<FoodItem> foodItem = FoodItem.get(foodId.get());
-                if (foodItem.isEmpty()) {
+                if (!foodItem.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
@@ -226,7 +226,7 @@ class FoodItemCli extends ModelCli {
                     scanner
                 );
                 Optional<FoodItem> foodItem = FoodItem.get(foodId.get());
-                if (foodItem.isEmpty()) {
+                if (!foodItem.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }

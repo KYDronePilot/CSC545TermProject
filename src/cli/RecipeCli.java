@@ -139,7 +139,7 @@ class RecipeCli extends ModelCli {
                     scanner
                 );
                 Optional<Recipe> recipe = Recipe.get(foodId.get());
-                if (recipe.isEmpty()) {
+                if (!recipe.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
@@ -172,7 +172,7 @@ class RecipeCli extends ModelCli {
                     scanner
                 );
                 Optional<Recipe> recipe = Recipe.get(recipeId.get());
-                if (recipe.isEmpty()) {
+                if (!recipe.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
@@ -236,7 +236,7 @@ class RecipeCli extends ModelCli {
                     scanner
                 );
                 Optional<Recipe> recipe = Recipe.get(recipeId.get());
-                if (recipe.isEmpty()) {
+                if (!recipe.isPresent()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
