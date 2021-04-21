@@ -1,7 +1,7 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
 
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,java,linux,windows
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,macos,java,linux,windows
+# Created by https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,macos,linux,java,netbeans
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,visualstudiocode,macos,linux,java,netbeans
 
 ### Java ###
 # Compiled class file
@@ -72,8 +72,18 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+### NetBeans ###
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
 ### VisualStudioCode ###
-# .vscode/*
+.vscode/*
 !.vscode/tasks.json
 !.vscode/launch.json
 *.code-workspace
@@ -109,9 +119,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,java,linux,windows
+# End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,macos,linux,java,netbeans
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
 .env
 !/lib/**
+nbproject/private/private.xml
