@@ -211,8 +211,8 @@ public abstract class ModelCli {
             System.out.print(prompt);
             String value = reader.run(scanner);
             // Remove whitespace
-            value = value.strip();
-            if (value.isBlank()) {
+            value = value.trim();
+            if (value.isEmpty()) {
                 // If blank and required, try again
                 if (required) {
                     System.out.println("Value is required");
@@ -436,7 +436,7 @@ public abstract class ModelCli {
                 ArrayList<Integer> valueList = new ArrayList<Integer>();
                 try {
                     for (String item : splitValues) {
-                        valueList.add(Integer.parseInt(item.strip()));
+                        valueList.add(Integer.parseInt(item.trim()));
                     }
                 } catch (NumberFormatException e) {
                     throw new ArgumentParsingException("Item not an integer");
