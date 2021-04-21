@@ -13,6 +13,7 @@ import picocli.CommandLine.Command;
 class FoodItemCli extends ModelCli {
 
     @Command(name = "add", description = "Add a food item")
+    @Override
     int add() {
         return userInteraction(
             scanner -> {
@@ -72,6 +73,7 @@ class FoodItemCli extends ModelCli {
     }
 
     @Command(name = "list", description = "List food items")
+    @Override
     int list() {
         return userInteraction(
             scanner -> {
@@ -97,6 +99,7 @@ class FoodItemCli extends ModelCli {
     }
 
     @Command(name = "get", description = "Get the details of a food item")
+    @Override
     int get() {
         return userInteraction(
             scanner -> {
@@ -127,6 +130,7 @@ class FoodItemCli extends ModelCli {
     }
 
     @Command(name = "update", description = "Update a food item's information")
+    @Override
     int update() {
         return userInteraction(
             scanner -> {
@@ -217,6 +221,7 @@ class FoodItemCli extends ModelCli {
     }
 
     @Command(name = "delete", description = "Delete a food item")
+    @Override
     int delete() {
         return userInteraction(
             scanner -> {

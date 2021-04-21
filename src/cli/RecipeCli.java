@@ -58,6 +58,7 @@ class RecipeCli extends ModelCli {
     }
 
     @Command(name = "add", description = "Add a Recipe")
+    @Override
     int add() {
         return userInteraction(
             scanner -> {
@@ -106,6 +107,7 @@ class RecipeCli extends ModelCli {
     }
 
     @Command(name = "list", description = "List recipes")
+    @Override
     int list() {
         return userInteraction(
             scanner -> {
@@ -130,6 +132,7 @@ class RecipeCli extends ModelCli {
     }
 
     @Command(name = "get", description = "Get the details of a recipe")
+    @Override
     int get() {
         return userInteraction(
             scanner -> {
@@ -158,6 +161,7 @@ class RecipeCli extends ModelCli {
     }
 
     @Command(name = "update", description = "Update a recipe's information")
+    @Override
     int update() {
         return userInteraction(
             scanner -> {
@@ -227,6 +231,7 @@ class RecipeCli extends ModelCli {
     }
 
     @Command(name = "delete", description = "Delete a recipe")
+    @Override
     int delete() {
         return userInteraction(
             scanner -> {

@@ -141,6 +141,7 @@ class MealPlanCli extends ModelCli {
     }
 
     @Command(name = "add", description = "Add a meal plan")
+    @Override
     int add() {
         return userInteraction(
             scanner -> {
@@ -165,6 +166,7 @@ class MealPlanCli extends ModelCli {
     }
 
     @Command(name = "list", description = "List meal plans")
+    @Override
     int list() {
         return userInteraction(
             scanner -> {
@@ -187,6 +189,7 @@ class MealPlanCli extends ModelCli {
     }
 
     @Command(name = "get", description = "Get the details of a meal plan")
+    @Override
     int get() {
         return userInteraction(
             scanner -> {
@@ -222,6 +225,7 @@ class MealPlanCli extends ModelCli {
     }
 
     @Command(name = "update", description = "Update a meal plan's information")
+    @Override
     int update() {
         return userInteraction(
             scanner -> {
@@ -266,6 +270,7 @@ class MealPlanCli extends ModelCli {
     }
 
     @Command(name = "delete", description = "Delete a meal plan")
+    @Override
     int delete() {
         return userInteraction(
             scanner -> {
