@@ -1,5 +1,7 @@
 package cli;
 
+import database.Database;
+import java.sql.SQLException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -16,7 +18,12 @@ import picocli.CommandLine.Command;
 public class RecipeMgmt {
 
     public static void main(String... args) {
-        int exitCode = new CommandLine(new RecipeMgmt()).execute(args);
+        int exitCode = 1;
+        try (Database db = Database.getInstance()) {
+            exitCode = new CommandLine(new RecipeMgmt()).execute(args);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         System.exit(exitCode);
     }
 }
