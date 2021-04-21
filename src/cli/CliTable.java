@@ -20,7 +20,7 @@ class CliTable {
      */
     public CliTable(String[] headers) {
         this.header = headers;
-        this.rows = new ArrayList<String[]>();
+        this.rows = new ArrayList<>();
     }
 
     /**

@@ -45,7 +45,7 @@ public class ModelHelper {
         throws SQLException {
         Database db = Database.getInstance();
         // Container object to temporarily store instance in so it can later be returned
-        Container<T> container = new Container<T>(null);
+        Container<T> container = new Container<>(null);
         // Query by id
         db.select(
             String.format("select * from %s where id = ?", className),
@@ -80,7 +80,7 @@ public class ModelHelper {
         throws SQLException {
         Database db = Database.getInstance();
         // For storing query results
-        ArrayList<T> results = new ArrayList<T>();
+        ArrayList<T> results = new ArrayList<>();
         // Run query
         db.select(
             sql,

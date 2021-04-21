@@ -38,7 +38,7 @@ class MealPlanCli extends ModelCli {
      * @throws SQLException if error executing SQL query
      */
     private List<Integer> getRecipeIdList() throws SQLException {
-        ArrayList<Integer> idList = new ArrayList<Integer>();
+        ArrayList<Integer> idList = new ArrayList<>();
         Database db = Database.getInstance();
         db.select(
             "select id from recipe",
@@ -129,7 +129,7 @@ class MealPlanCli extends ModelCli {
      * @return days of the week that already have a meal plan
      */
     private List<String> getTakenDays() throws SQLException {
-        ArrayList<String> takenDays = new ArrayList<String>();
+        ArrayList<String> takenDays = new ArrayList<>();
         Database db = Database.getInstance();
         db.select(
             "select day from MealPlan",

@@ -64,6 +64,7 @@ public class Database implements AutoCloseable {
     /**
      * Close the shared database connection if it is open.
      */
+    @Override
     public void close() {
         if (instance != null) {
             // Try to close, but proceed even if there's an error

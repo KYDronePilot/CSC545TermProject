@@ -134,7 +134,7 @@ class InputValidators {
             value -> {
                 List<Integer> valuesInt = (List<Integer>) value;
                 // Make sure they are all unique
-                HashSet<Integer> hs = new HashSet<Integer>(valuesInt);
+                HashSet<Integer> hs = new HashSet<>(valuesInt);
                 if (hs.size() < valuesInt.size()) {
                     return Optional.of("Duplicate values not allowed");
                 }
@@ -184,7 +184,7 @@ class InputValidators {
 /**
  * Model CLI superclass for managing a database model.
  */
-public abstract class ModelCli {
+abstract class ModelCli {
 
     /**
      * For repeatedly prompting, parsing, and validating an input value from a user.
@@ -195,6 +195,7 @@ public abstract class ModelCli {
      * @param caster function to parse raw input to requested type
      * @param required whether this input can be left blank (user just hits enter)
      * @param scanner Scanner instance to read input
+     * @param reader handler for reading input from user
      * @return validated input if valid one given, else Optional.empty()
      */
     protected <T> Optional<T> validatedInput(
@@ -433,7 +434,7 @@ public abstract class ModelCli {
             InputValidators.eachPossibleIntegerValidator(possibleValues),
             value -> {
                 String[] splitValues = value.split(",");
-                ArrayList<Integer> valueList = new ArrayList<Integer>();
+                ArrayList<Integer> valueList = new ArrayList<>();
                 try {
                     for (String item : splitValues) {
                         valueList.add(Integer.parseInt(item.trim()));
@@ -478,6 +479,7 @@ public abstract class ModelCli {
      * For handling user interaction with System.in and the DB.
      *
      * @param interactionHandler lambda which handles user interaction
+     * @return exit status code
      */
     protected Integer userInteraction(UserDbInteractionLambda interactionHandler) {
         try (Scanner scanner = new Scanner(System.in)) {

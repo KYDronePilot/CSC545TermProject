@@ -46,7 +46,7 @@ class RecipeCli extends ModelCli {
     }
 
     private List<Integer> getIngredientIds() throws SQLException {
-        ArrayList<Integer> idList = new ArrayList<Integer>();
+        ArrayList<Integer> idList = new ArrayList<>();
         Database db = Database.getInstance();
         db.select(
             "select id from FoodItem",
