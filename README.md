@@ -103,3 +103,11 @@ Subcommands:
 ```bash
 java -jar dist/CSC545TermProject.jar shopping
 ```
+
+## Open source software
+
+This project is partially built with an open source library
+[`picocli`](https://picocli.info) which made it easier to build the command line
+interface. `picocli` provides useful error messages if the CLI input is
+malformed and the `--help` option lists what subcommands in the program can be
+run.
