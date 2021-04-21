@@ -29,6 +29,11 @@ auto-generated id field when inserting a new record.
 - <https://stackoverflow.com/a/56236430/11354266>
 - <https://stackoverflow.com/a/1915197/11354266>
 
+## Notes
+
+- The main class (i.e. the execution entry-point) for the project is
+  `cli.RecipeMgmt`.
+
 ## Setup
 
 ### Enter database login credentials
