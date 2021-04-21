@@ -8,7 +8,8 @@ import java.util.Optional;
  * Database interaction wrapper.
  *
  * Singleton pattern based on this example: https://www.geeksforgeeks.org/singleton-class-java/
- * Uses try with resource syntax to auto-close when done: https://stackoverflow.com/a/15768083/11354266
+ * Uses try with resource syntax to auto-close connection when done:
+ *   https://stackoverflow.com/a/15768083/11354266
  */
 public class Database implements AutoCloseable {
 
