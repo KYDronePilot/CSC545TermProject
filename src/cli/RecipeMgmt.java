@@ -16,7 +16,7 @@ import picocli.CommandLine.Command;
 public class RecipeMgmt {
 
     public static void main(String... args) {
-        var exitCode = new CommandLine(new RecipeMgmt()).execute(args);
+        int exitCode = new CommandLine(new RecipeMgmt()).execute(args);
         System.exit(exitCode);
     }
 }

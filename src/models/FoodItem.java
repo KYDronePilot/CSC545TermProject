@@ -72,8 +72,8 @@ public class FoodItem implements Comparable<FoodItem> {
         Integer units
     )
         throws SQLException {
-        var db = Database.getInstance();
-        var id = db.insert(
+        Database db = Database.getInstance();
+        Optional<Integer> id = db.insert(
             "FoodItem",
             columns,
             stmt -> {
@@ -88,7 +88,7 @@ public class FoodItem implements Comparable<FoodItem> {
     }
 
     public void update() throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         db.update(
             "FoodItem",
             columns,

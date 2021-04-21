@@ -43,9 +43,9 @@ public class ModelHelper {
         ConstructInstanceLambda<T> constructInstance
     )
         throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         // Container object to temporarily store instance in so it can later be returned
-        var container = new Container<T>(null);
+        Container<T> container = new Container<T>(null);
         // Query by id
         db.select(
             String.format("select * from %s where id = ?", className),
@@ -78,9 +78,9 @@ public class ModelHelper {
         ConstructInstanceLambda<T> constructInstance
     )
         throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         // For storing query results
-        var results = new ArrayList<T>();
+        ArrayList<T> results = new ArrayList<T>();
         // Run query
         db.select(
             sql,
@@ -102,7 +102,7 @@ public class ModelHelper {
      * @throws SQLException if error executing SQL
      */
     public static void delete(Integer id, String tableName) throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         // Run query
         db.modify(
             String.format("delete from %s where id = ?", tableName),

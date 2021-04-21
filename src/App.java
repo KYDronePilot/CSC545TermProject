@@ -1,24 +1,25 @@
 import java.sql.Types;
+import java.util.ArrayList;
 import models.NutritionFacts;
 
 public class App {
 
     public static void main(String[] args) throws Exception {
-        // var db = Database.getInstance();
-        var facts = NutritionFacts.create(1, 2, 3, 4, 5);
+        // Database db = Database.getInstance();
+        NutritionFacts facts = NutritionFacts.create(1, 2, 3, 4, 5);
         System.out.println(facts.id);
         System.out.println(facts.sugar);
-        var items = NutritionFacts.filter(
+        ArrayList<NutritionFacts> items = NutritionFacts.filter(
             "select * from NutritionFacts where id = ?",
             stmt -> {
                 stmt.setInt(1, 12);
             }
         );
-        var item = items.get(0);
+        NutritionFacts item = items.get(0);
         item.delete();
         // item.calories = 100;
         // item.update();
-        // for (var item : items) {
+        // for (NutritionFacts item : items) {
         //     System.out.println(item.id);
         // }
         // System.out.println(db.getClass().getDeclaredFields()[0].getName());

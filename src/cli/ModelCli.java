@@ -134,12 +134,12 @@ class InputValidators {
             value -> {
                 List<Integer> valuesInt = (List<Integer>) value;
                 // Make sure they are all unique
-                var hs = new HashSet<Integer>(valuesInt);
+                HashSet<Integer> hs = new HashSet<Integer>(valuesInt);
                 if (hs.size() < valuesInt.size()) {
                     return Optional.of("Duplicate values not allowed");
                 }
                 // Make sure each value is valid
-                for (var intValue : valuesInt) {
+                for (Integer intValue : valuesInt) {
                     if (!possibleValues.contains(intValue)) {
                         return Optional.of(
                             String.format("Each value must be one of %s", possibleValues.toString())
@@ -209,7 +209,7 @@ public abstract class ModelCli {
         while (true) {
             // Prompt and get value
             System.out.print(prompt);
-            var value = reader.run(scanner);
+            String value = reader.run(scanner);
             // Remove whitespace
             value = value.strip();
             if (value.isBlank()) {
@@ -232,8 +232,8 @@ public abstract class ModelCli {
             // If there are validators, run them
             if (validators != null) {
                 boolean isError = false;
-                for (var validator : validators) {
-                    var output = validator.run(castedValue);
+                for (ValidateInputLambda<T> validator : validators) {
+                    Optional<String> output = validator.run(castedValue);
                     // If validator gave output, print the error and indicate there was an error
                     if (output.isPresent()) {
                         System.out.println(output.get());
@@ -338,7 +338,7 @@ public abstract class ModelCli {
                 String lines = "";
                 // Read lines until a single line with "/" is entered
                 while (true) {
-                    var line = readerScanner.nextLine();
+                    String line = readerScanner.nextLine();
                     if (line.equals("/")) {
                         return lines;
                     } else {
@@ -432,10 +432,10 @@ public abstract class ModelCli {
             prompt,
             InputValidators.eachPossibleIntegerValidator(possibleValues),
             value -> {
-                var splitValues = value.split(",");
-                var valueList = new ArrayList<Integer>();
+                String[] splitValues = value.split(",");
+                ArrayList<Integer> valueList = new ArrayList<Integer>();
                 try {
-                    for (var item : splitValues) {
+                    for (String item : splitValues) {
                         valueList.add(Integer.parseInt(item.strip()));
                     }
                 } catch (NumberFormatException e) {
@@ -480,7 +480,7 @@ public abstract class ModelCli {
      * @param interactionHandler lambda which handles user interaction
      */
     protected Integer userInteraction(UserDbInteractionLambda interactionHandler) {
-        try (var scanner = new Scanner(System.in)) {
+        try (Scanner scanner = new Scanner(System.in)) {
             return interactionHandler.run(scanner);
         } catch (SQLException e) {
             e.printStackTrace();

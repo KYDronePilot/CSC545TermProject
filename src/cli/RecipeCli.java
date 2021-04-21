@@ -4,6 +4,7 @@ import database.Database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import models.FoodItem;
 import models.Recipe;
 import picocli.CommandLine.Command;
@@ -24,7 +25,7 @@ class RecipeCli extends ModelCli {
      */
     private void saveIngredients(Integer recipeId, List<Integer> ingredientIds)
         throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         // Delete any existing ingredients for recipe
         db.modify(
             "delete from RecipeFoodItem where recipeId = ?",
@@ -33,7 +34,7 @@ class RecipeCli extends ModelCli {
             }
         );
         // Create new M2M ingredient links for recipe
-        for (var ingredientId : ingredientIds) {
+        for (Integer ingredientId : ingredientIds) {
             db.modify(
                 "insert into RecipeFoodItem (recipeId, foodItemId) values (?, ?)",
                 stmt -> {
@@ -45,8 +46,8 @@ class RecipeCli extends ModelCli {
     }
 
     private List<Integer> getIngredientIds() throws SQLException {
-        var idList = new ArrayList<Integer>();
-        var db = Database.getInstance();
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        Database db = Database.getInstance();
         db.select(
             "select id from FoodItem",
             rs -> {
@@ -60,32 +61,40 @@ class RecipeCli extends ModelCli {
     int add() {
         return userInteraction(
             scanner -> {
-                var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
-                var possibleIngredientIds = getIngredientIds();
-                var recipeName = validatedString("Enter recipe name: ", 100, true, scanner);
-                var recipeCategory = validatedString(
+                ArrayList<FoodItem> ingredients = FoodItem.filter(
+                    "select * from FoodItem",
+                    stmt -> {}
+                );
+                List<Integer> possibleIngredientIds = getIngredientIds();
+                Optional<String> recipeName = validatedString(
+                    "Enter recipe name: ",
+                    100,
+                    true,
+                    scanner
+                );
+                Optional<String> recipeCategory = validatedString(
                     "Enter the recipe category: ",
                     60,
                     true,
                     scanner
                 );
                 System.out.println("The following are all available recipe ingredients:");
-                for (var ingredient : ingredients) {
+                for (FoodItem ingredient : ingredients) {
                     System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
                 }
-                var ingredientIds = validatedCommaSepPossibleInt(
+                Optional<List<Integer>> ingredientIds = validatedCommaSepPossibleInt(
                     "Enter comma-separated IDs of ingredients used in this recipe: ",
                     possibleIngredientIds,
                     true,
                     scanner
                 );
-                var recipeInstructions = validatedMultilineString(
+                Optional<String> recipeInstructions = validatedMultilineString(
                     "Enter recipe instructions (type \"/<return>\" on a blank line to denote the end):\n",
                     true,
                     scanner
                 );
                 System.out.println("Saving to DB...");
-                var newItem = Recipe.create(
+                Recipe newItem = Recipe.create(
                     recipeName.get(),
                     recipeInstructions.get(),
                     recipeCategory.get()
@@ -100,9 +109,11 @@ class RecipeCli extends ModelCli {
     int list() {
         return userInteraction(
             scanner -> {
-                var items = Recipe.filter("select * from Recipe", stmt -> {});
-                var table = new CliTable(new String[] { "ID", "Name", "Category", "More info..." });
-                for (var item : items) {
+                ArrayList<Recipe> items = Recipe.filter("select * from Recipe", stmt -> {});
+                CliTable table = new CliTable(
+                    new String[] { "ID", "Name", "Category", "More info..." }
+                );
+                for (Recipe item : items) {
                     table.rows.add(
                         new String[] {
                             String.valueOf(item.id),
@@ -122,19 +133,23 @@ class RecipeCli extends ModelCli {
     int get() {
         return userInteraction(
             scanner -> {
-                var foodId = validatedPositiveInt("Enter the recipe ID to get: ", true, scanner);
-                var recipe = Recipe.get(foodId.get());
+                Optional<Integer> foodId = validatedPositiveInt(
+                    "Enter the recipe ID to get: ",
+                    true,
+                    scanner
+                );
+                Optional<Recipe> recipe = Recipe.get(foodId.get());
                 if (recipe.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
-                var recipeVal = recipe.get();
-                var ingredients = recipeVal.getFoodItems();
+                Recipe recipeVal = recipe.get();
+                List<FoodItem> ingredients = recipeVal.getFoodItems();
                 System.out.printf("\nID: %s\n", recipeVal.id);
                 System.out.printf("Name: %s\n", recipeVal.name);
                 System.out.printf("Category: %s\n", recipeVal.category);
                 System.out.println("Ingredients:");
-                for (var ingredient : ingredients) {
+                for (FoodItem ingredient : ingredients) {
                     System.out.printf("  %s\n", ingredient);
                 }
                 return 0;
@@ -146,20 +161,23 @@ class RecipeCli extends ModelCli {
     int update() {
         return userInteraction(
             scanner -> {
-                var ingredients = FoodItem.filter("select * from FoodItem", stmt -> {});
-                var possibleIngredientIds = getIngredientIds();
-                var recipeId = validatedPositiveInt(
+                ArrayList<FoodItem> ingredients = FoodItem.filter(
+                    "select * from FoodItem",
+                    stmt -> {}
+                );
+                List<Integer> possibleIngredientIds = getIngredientIds();
+                Optional<Integer> recipeId = validatedPositiveInt(
                     "Enter the recipe ID to update: ",
                     true,
                     scanner
                 );
-                var recipe = Recipe.get(recipeId.get());
+                Optional<Recipe> recipe = Recipe.get(recipeId.get());
                 if (recipe.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
-                var recipeVal = recipe.get();
-                var recipeName = validatedString(
+                Recipe recipeVal = recipe.get();
+                Optional<String> recipeName = validatedString(
                     String.format("Enter the recipe name (\"%s\"): ", recipeVal.name),
                     100,
                     false,
@@ -168,7 +186,7 @@ class RecipeCli extends ModelCli {
                 if (recipeName.isPresent()) {
                     recipeVal.name = recipeName.get();
                 }
-                var recipeCategory = validatedString(
+                Optional<String> recipeCategory = validatedString(
                     String.format("Enter the recipe category (\"%s\"): ", recipeVal.category),
                     60,
                     false,
@@ -178,16 +196,16 @@ class RecipeCli extends ModelCli {
                     recipeVal.category = recipeCategory.get();
                 }
                 System.out.println("The following are all available recipe ingredients:");
-                for (var ingredient : ingredients) {
+                for (FoodItem ingredient : ingredients) {
                     System.out.printf("  %3d: %s\n", ingredient.id, ingredient.name);
                 }
-                var ingredientIds = validatedCommaSepPossibleInt(
+                Optional<List<Integer>> ingredientIds = validatedCommaSepPossibleInt(
                     "Enter comma-separated IDs of ingredients used in this recipe (old ingredients have been removed): ",
                     possibleIngredientIds,
                     true,
                     scanner
                 );
-                var recipeInstructions = validatedMultilineString(
+                Optional<String> recipeInstructions = validatedMultilineString(
                     String.format(
                         "Enter the recipe instructions (\"%s...\"):\n",
                         recipeVal.instructions
@@ -212,12 +230,12 @@ class RecipeCli extends ModelCli {
     int delete() {
         return userInteraction(
             scanner -> {
-                var recipeId = validatedPositiveInt(
+                Optional<Integer> recipeId = validatedPositiveInt(
                     "Enter the recipe ID to delete: ",
                     true,
                     scanner
                 );
-                var recipe = FoodItem.get(recipeId.get());
+                Optional<Recipe> recipe = Recipe.get(recipeId.get());
                 if (recipe.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;

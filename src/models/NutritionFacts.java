@@ -5,6 +5,7 @@ import database.ThrowingConsumer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Optional;
 import utils.ModelHelper;
 
 public class NutritionFacts implements Comparable<NutritionFacts> {
@@ -65,8 +66,8 @@ public class NutritionFacts implements Comparable<NutritionFacts> {
 
     public static NutritionFacts create(int calories, int sugar, int protein, int sodium, int fat)
         throws SQLException {
-        var db = Database.getInstance();
-        var id = db.insert(
+        Database db = Database.getInstance();
+        Optional<Integer> id = db.insert(
             "NutritionFacts",
             new String[] { "calories", "sugar", "protein", "sodium", "fat" },
             stmt -> {
@@ -82,7 +83,7 @@ public class NutritionFacts implements Comparable<NutritionFacts> {
     }
 
     public void update() throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         db.update(
             "NutritionFacts",
             new String[] { "calories", "sugar", "protein", "sodium", "fat" },

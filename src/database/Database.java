@@ -37,7 +37,7 @@ public class Database implements AutoCloseable {
             System.exit(1);
         }
         // For getting DB credentials from .env file
-        var env = Dotenv.load();
+        Dotenv env = Dotenv.load();
         // Open connection
         try {
             conn = DriverManager.getConnection(DB_URL, env.get("USERNAME"), env.get("PASSWORD"));
@@ -91,11 +91,11 @@ public class Database implements AutoCloseable {
     )
         throws SQLException {
         // Create a statement
-        try (var stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Bind any statement parameters
             setValues.accept(stmt);
             // Run the query
-            try (var rs = stmt.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) {
                 // For each result, call the `applyToRow` lambda, passing the row's ResultSet
                 while (rs.next()) {
                     applyToRow.accept(rs);
@@ -126,7 +126,7 @@ public class Database implements AutoCloseable {
     public void modify(String sql, ThrowingConsumer<PreparedStatement, SQLException> setValues)
         throws SQLException {
         // Create a statement
-        try (var stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Bind any parameters
             setValues.accept(stmt);
             // Execute it
@@ -165,11 +165,11 @@ public class Database implements AutoCloseable {
     )
         throws SQLException {
         // Generate placeholders for `VALUES` section of query
-        var placeholders = new String[columns.length];
+        String[] placeholders = new String[columns.length];
         Arrays.fill(placeholders, "?");
         // Generate insert statement
         try (
-            var stmt = conn.prepareStatement(
+            PreparedStatement stmt = conn.prepareStatement(
                 String.format(
                     "insert into %s (%s) values (%s)",
                     tableName,
@@ -186,7 +186,7 @@ public class Database implements AutoCloseable {
             stmt.executeUpdate();
             // Try to get the auto generated key if needed
             if (getGeneratedKey) {
-                var rs = stmt.getGeneratedKeys();
+                ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
                     return Optional.of(rs.getInt(1));
                 }
@@ -212,13 +212,13 @@ public class Database implements AutoCloseable {
     )
         throws SQLException {
         // Generate array of the update command's `SET` parameters
-        var updateAttrs = new String[columns.length];
+        String[] updateAttrs = new String[columns.length];
         for (int i = 0; i < columns.length; i++) {
             updateAttrs[i] = columns[i] + " = ?";
         }
         // Create update statement
         try (
-            var stmt = conn.prepareStatement(
+            PreparedStatement stmt = conn.prepareStatement(
                 String.format(
                     "update %s set %s where id = ?",
                     tableName,

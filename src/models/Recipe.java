@@ -61,8 +61,8 @@ public class Recipe implements Comparable<Recipe> {
 
     public static Recipe create(String name, String instructions, String category)
         throws SQLException {
-        var db = Database.getInstance();
-        var id = db.insert(
+        Database db = Database.getInstance();
+        Optional<Integer> id = db.insert(
             "Recipe",
             new String[] { "name", "instructions", "category" },
             stmt -> {
@@ -76,7 +76,7 @@ public class Recipe implements Comparable<Recipe> {
     }
 
     public void update() throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         db.update(
             "Recipe",
             new String[] { "name", "instructions", "category" },

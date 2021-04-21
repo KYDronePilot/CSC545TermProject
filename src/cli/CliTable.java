@@ -40,9 +40,9 @@ class CliTable {
      */
     private int maxColWidth(int colI) {
         // Start with column name
-        var maxWidth = header[colI].length();
+        int maxWidth = header[colI].length();
         // Check each row
-        for (var row : rows) {
+        for (String[] row : rows) {
             if (row[colI].length() > maxWidth) {
                 maxWidth = row[colI].length();
             }
@@ -58,26 +58,26 @@ class CliTable {
     @Override
     public String toString() {
         // Get max widths for each column
-        var maxWidths = new int[header.length];
-        for (var i = 0; i < header.length; i++) {
+        int[] maxWidths = new int[header.length];
+        for (int i = 0; i < header.length; i++) {
             maxWidths[i] = maxColWidth(i);
         }
         // Generate a horizontal divider
-        var divider = "+";
-        for (var maxWidth : maxWidths) {
+        String divider = "+";
+        for (int maxWidth : maxWidths) {
             divider += "-".repeat(maxWidth + 2) + "+";
         }
         // Generate header
-        var headerRow = "|";
-        for (var i = 0; i < header.length; i++) {
+        String headerRow = "|";
+        for (int i = 0; i < header.length; i++) {
             headerRow += " " + String.format("%-" + maxWidths[i] + "s", header[i]) + " |";
         }
         // Start to merge stuff
-        var tableText = divider + "\n" + headerRow + "\n" + divider + "\n";
+        String tableText = divider + "\n" + headerRow + "\n" + divider + "\n";
         // Generate and join data rows
-        for (var row : rows) {
+        for (String[] row : rows) {
             tableText += "|";
-            for (var i = 0; i < header.length; i++) {
+            for (int i = 0; i < header.length; i++) {
                 tableText += " " + String.format("%-" + maxWidths[i] + "s", row[i]) + " |";
             }
             tableText += "\n";

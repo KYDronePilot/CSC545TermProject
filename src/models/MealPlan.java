@@ -47,8 +47,8 @@ public class MealPlan implements Comparable<MealPlan> {
     }
 
     public static MealPlan create(String name, String day) throws SQLException {
-        var db = Database.getInstance();
-        var id = db.insert(
+        Database db = Database.getInstance();
+        Optional<Integer> id = db.insert(
             "MealPlan",
             new String[] { "name", "day" },
             stmt -> {
@@ -61,7 +61,7 @@ public class MealPlan implements Comparable<MealPlan> {
     }
 
     public void update() throws SQLException {
-        var db = Database.getInstance();
+        Database db = Database.getInstance();
         db.update(
             "MealPlan",
             new String[] { "name", "day" },

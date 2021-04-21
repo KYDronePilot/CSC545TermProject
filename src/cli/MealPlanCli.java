@@ -23,9 +23,9 @@ class MealPlanCli extends ModelCli {
      * @throws SQLException if error executing SQL query
      */
     private String getRecipeList() throws SQLException {
-        var recipes = Recipe.filter("select * from Recipe", stmt -> {});
-        var text = "Recipes:";
-        for (var recipe : recipes) {
+        ArrayList<Recipe> recipes = Recipe.filter("select * from Recipe", stmt -> {});
+        String text = "Recipes:";
+        for (Recipe recipe : recipes) {
             text += String.format("\n  %3d: %s", recipe.id, recipe.name);
         }
         return text;
@@ -38,8 +38,8 @@ class MealPlanCli extends ModelCli {
      * @throws SQLException if error executing SQL query
      */
     private List<Integer> getRecipeIdList() throws SQLException {
-        var idList = new ArrayList<Integer>();
-        var db = Database.getInstance();
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        Database db = Database.getInstance();
         db.select(
             "select id from recipe",
             rs -> {
@@ -57,8 +57,8 @@ class MealPlanCli extends ModelCli {
      * @throws SQLException if error executing SQL query
      */
     private void updateMeals(Scanner scanner, Integer mealPlanId) throws SQLException {
-        var db = Database.getInstance();
-        var recipeIds = getRecipeIdList();
+        Database db = Database.getInstance();
+        List<Integer> recipeIds = getRecipeIdList();
         // Delete any existing meals
         db.modify(
             "delete from RecipeMealPlan where mealPlanId = ?",
@@ -69,13 +69,13 @@ class MealPlanCli extends ModelCli {
         System.out.println(getRecipeList());
         while (true) {
             // Get meal info
-            var meal = validatedString(
+            Optional<String> meal = validatedString(
                 "Enter the name of a meal for this plan (e.g. 'breakfast', 'lunch', etc.): ",
                 20,
                 true,
                 scanner
             );
-            var recipeId = validatedPossibleInt(
+            Optional<Integer> recipeId = validatedPossibleInt(
                 "Enter the ID of the recipe for this meal: ",
                 recipeIds,
                 true,
@@ -129,8 +129,8 @@ class MealPlanCli extends ModelCli {
      * @return days of the week that already have a meal plan
      */
     private List<String> getTakenDays() throws SQLException {
-        var takenDays = new ArrayList<String>();
-        var db = Database.getInstance();
+        ArrayList<String> takenDays = new ArrayList<String>();
+        Database db = Database.getInstance();
         db.select(
             "select day from MealPlan",
             rs -> {
@@ -144,15 +144,20 @@ class MealPlanCli extends ModelCli {
     int add() {
         return userInteraction(
             scanner -> {
-                var takenDays = getTakenDays();
-                var mealPlanName = validatedString("Enter the meal plan name: ", 20, true, scanner);
-                var mealPlanDay = validatedDayOfWeek(
+                List<String> takenDays = getTakenDays();
+                Optional<String> mealPlanName = validatedString(
+                    "Enter the meal plan name: ",
+                    20,
+                    true,
+                    scanner
+                );
+                Optional<String> mealPlanDay = validatedDayOfWeek(
                     "Enter the meal plan day of week ('mon', 'tue', 'wed', etc.): ",
                     takenDays,
                     true,
                     scanner
                 );
-                var newItem = MealPlan.create(mealPlanName.get(), mealPlanDay.get());
+                MealPlan newItem = MealPlan.create(mealPlanName.get(), mealPlanDay.get());
                 updateMeals(scanner, newItem.id);
                 return 0;
             }
@@ -163,9 +168,9 @@ class MealPlanCli extends ModelCli {
     int list() {
         return userInteraction(
             scanner -> {
-                var items = MealPlan.filter("select * from MealPlan", stmt -> {});
-                var table = new CliTable(new String[] { "ID", "Name", "Day", "More info..." });
-                for (var item : items) {
+                ArrayList<MealPlan> items = MealPlan.filter("select * from MealPlan", stmt -> {});
+                CliTable table = new CliTable(new String[] { "ID", "Name", "Day", "More info..." });
+                for (MealPlan item : items) {
                     table.rows.add(
                         new String[] {
                             String.valueOf(item.id),
@@ -185,22 +190,22 @@ class MealPlanCli extends ModelCli {
     int get() {
         return userInteraction(
             scanner -> {
-                var mealPlanId = validatedPositiveInt(
+                Optional<Integer> mealPlanId = validatedPositiveInt(
                     "Enter the meal plan ID to get: ",
                     true,
                     scanner
                 );
-                var mealPlan = MealPlan.get(mealPlanId.get());
+                Optional<MealPlan> mealPlan = MealPlan.get(mealPlanId.get());
                 if (mealPlan.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
-                var mealPlanVal = mealPlan.get();
+                MealPlan mealPlanVal = mealPlan.get();
                 System.out.printf("\nID: %s\n", mealPlanVal.id);
                 System.out.printf("Name: %s\n", mealPlanVal.name);
                 System.out.printf("Day: %s\n", mealPlanVal.day);
                 System.out.println("Meals");
-                var db = Database.getInstance();
+                Database db = Database.getInstance();
                 // Get all meals for this meal plan
                 db.select(
                     "select rmp.meal as meal, r.name as name from Recipe r join RecipeMealPlan rmp on r.id = rmp.recipeId join MealPlan mp on rmp.mealPlanId = mp.id where mp.id = ?",
@@ -220,19 +225,19 @@ class MealPlanCli extends ModelCli {
     int update() {
         return userInteraction(
             scanner -> {
-                var mealPlanId = validatedPositiveInt(
+                Optional<Integer> mealPlanId = validatedPositiveInt(
                     "Enter the meal plan ID to update: ",
                     true,
                     scanner
                 );
-                var mealPlan = MealPlan.get(mealPlanId.get());
+                Optional<MealPlan> mealPlan = MealPlan.get(mealPlanId.get());
                 if (mealPlan.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
                 }
-                var mealPlanVal = mealPlan.get();
-                var takenDays = getTakenDays();
-                var mealPlanName = validatedString(
+                MealPlan mealPlanVal = mealPlan.get();
+                List<String> takenDays = getTakenDays();
+                Optional<String> mealPlanName = validatedString(
                     String.format("Enter the meal plan name (\"%s\"): ", mealPlanVal.name),
                     20,
                     false,
@@ -241,7 +246,7 @@ class MealPlanCli extends ModelCli {
                 if (mealPlanName.isPresent()) {
                     mealPlanVal.name = mealPlanName.get();
                 }
-                var mealPlanDay = validatedDayOfWeek(
+                Optional<String> mealPlanDay = validatedDayOfWeek(
                     String.format("Enter the meal plan day of week (\"%s\"): ", mealPlanVal.day),
                     takenDays,
                     false,
@@ -264,12 +269,12 @@ class MealPlanCli extends ModelCli {
     int delete() {
         return userInteraction(
             scanner -> {
-                var mealPlanId = validatedPositiveInt(
+                Optional<Integer> mealPlanId = validatedPositiveInt(
                     "Enter the meal plan ID to delete: ",
                     true,
                     scanner
                 );
-                var mealPlan = MealPlan.get(mealPlanId.get());
+                Optional<MealPlan> mealPlan = MealPlan.get(mealPlanId.get());
                 if (mealPlan.isEmpty()) {
                     System.out.println("ID doesn't exist. Try again.");
                     return 1;
