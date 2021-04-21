@@ -51,6 +51,20 @@ class CliTable {
     }
 
     /**
+     * Repeat and return the string `count` times
+     *
+     * @param s the string to repeat
+     * @return repeated string
+     */
+    private String repeatString(String s, Integer count) {
+        String res = "";
+        for (int i = 0; i < count; i++) {
+            res += s;
+        }
+        return res;
+    }
+
+    /**
      * Generate the ASCII table.
      *
      * @return ASCII table
@@ -65,7 +79,7 @@ class CliTable {
         // Generate a horizontal divider
         String divider = "+";
         for (int maxWidth : maxWidths) {
-            divider += "-".repeat(maxWidth + 2) + "+";
+            divider += repeatString("-", maxWidth + 2) + "+";
         }
         // Generate header
         String headerRow = "|";
