@@ -1,4 +1,26 @@
-# CSC 545 Term Project
+---
+title: "CSC 545: Term Project"
+subtitle: Java Project README
+author:
+    - Ivan Olivas
+    - Trevor Cunagin
+    - Ethen Holzapfel
+    - Michael Galliers
+date: \today{}
+papersize: [letterpaper]
+geometry: [margin=1in]
+urlcolor: blue
+fontsize: 12pt
+indent: false
+header-includes:
+    - \newcommand{\ra}{\rightarrow}
+    - \usepackage{setspace}
+#   - \doublespacing
+---
+
+\maketitle
+\thispagestyle{empty}
+\clearpage
 
 ## References
 
