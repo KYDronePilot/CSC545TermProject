@@ -104,6 +104,9 @@ Subcommands:
 - `get`: Get the details of a recipe
 - `list`: List recipes
 - `search`: Search for a recipe
+  - You must provide one of the following options when running this subcommand:
+    - `-c`: Category filter string
+    - `-i`: Ingredient filter string
 - `update`: Update a recipe's information
 
 ### Meal management
