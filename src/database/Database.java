@@ -1,6 +1,5 @@
 package database;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Optional;
@@ -36,11 +35,9 @@ public class Database implements AutoCloseable {
             System.out.println("JDBC driver not installed");
             System.exit(1);
         }
-        // For getting DB credentials from .env file
-        Dotenv env = Dotenv.load();
         // Open connection
         try {
-            conn = DriverManager.getConnection(DB_URL, env.get("USERNAME"), env.get("PASSWORD"));
+            conn = DriverManager.getConnection(DB_URL, Credentials.USERNAME, Credentials.PASSWORD);
         } catch (SQLException e) {
             System.out.println("Failed to connect to DB");
             throw e;
