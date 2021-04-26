@@ -268,6 +268,19 @@ class RecipeCli extends ModelCli {
             System.err.println("Must provide one of [-c] or [-i] options");
             return 1;
         }
+        try {
+            var recipes = Recipe.filter(
+                "select * from recipe where id=?",
+                stmt -> {
+                    stmt.setInt(1, 3);
+                }
+            );
+            for (Recipe recipe : recipes) {
+                System.out.println(recipe.name + System.lineSeparator() + recipe.instructions);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
         return 0;
     }
 }
