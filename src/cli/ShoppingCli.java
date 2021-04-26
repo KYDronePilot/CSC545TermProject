@@ -1,5 +1,7 @@
 package cli;
 
+import database.Database;
+import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import picocli.CommandLine.Command;
 
@@ -16,6 +18,18 @@ public class ShoppingCli implements Callable<Integer> {
     @Override
     public Integer call() {
         System.out.println("Here is your shopping list: ...");
+        try {
+            var db = Database.getInstance();
+            db.select(
+                "SELECT distinct fooditem.name as name FROM fooditem INNER JOIN recipefooditem ON recipefooditem.fooditemid = fooditem.id INNER JOIN recipemealplan ON recipemealplan.recipeid = recipefooditem.recipeid WHERE fooditem.units = 0",
+                rs -> {
+                    System.out.println(rs.getString("name"));
+                }
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return 0;
     }
 }
