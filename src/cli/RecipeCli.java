@@ -57,6 +57,21 @@ class RecipeCli extends ModelCli {
         return idList;
     }
 
+    private String getRecipeTable(List<Recipe> recipes) {
+        CliTable table = new CliTable(new String[] { "ID", "Name", "Category", "More info..." });
+        for (Recipe recipe : recipes) {
+            table.rows.add(
+                new String[] {
+                    String.valueOf(recipe.id),
+                    recipe.name,
+                    recipe.category,
+                    "Run `get` sub-command for more info",
+                }
+            );
+        }
+        return table.toString();
+    }
+
     @Command(name = "add", description = "Add a Recipe")
     @Override
     int add() {
@@ -112,20 +127,7 @@ class RecipeCli extends ModelCli {
         return userInteraction(
             scanner -> {
                 ArrayList<Recipe> items = Recipe.filter("select * from Recipe", stmt -> {});
-                CliTable table = new CliTable(
-                    new String[] { "ID", "Name", "Category", "More info..." }
-                );
-                for (Recipe item : items) {
-                    table.rows.add(
-                        new String[] {
-                            String.valueOf(item.id),
-                            item.name,
-                            item.category,
-                            "Run `recipe get` for more info",
-                        }
-                    );
-                }
-                System.out.println(table.toString());
+                System.out.println(getRecipeTable(items));
                 return 0;
             }
         );
@@ -264,7 +266,7 @@ class RecipeCli extends ModelCli {
             defaultValue = ""
         ) String category
     ) {
-        if (ingredient.equals("") && category.equals("")) {
+        if (ingredient.equals("") == category.equals("")) {
             System.err.println("Must provide one of [-c] or [-i] options");
             return 1;
         }
@@ -272,27 +274,23 @@ class RecipeCli extends ModelCli {
             //checks if category string from command is empty, if not, queries database for
             //recipe with a matching category
             if (category.isBlank() == false) {
-                var recipes = Recipe.filter(
+                ArrayList<Recipe> recipes = Recipe.filter(
                     "select * from recipe where category=?",
                     stmt -> {
                         stmt.setString(1, category);
                     }
                 );
 
-                for (Recipe recipe : recipes) {
-                    System.out.println(recipe.name + System.lineSeparator() + recipe.instructions);
-                }
+                System.out.println(getRecipeTable(recipes));
             } else { //queries for recipe with matching matching ingredient name from the fooditem table
-                var recipes = Recipe.filter(
+                ArrayList<Recipe> recipes = Recipe.filter(
                     "select r.* from recipe r join RecipeFoodItem rfi on r.id = rfi.recipeID join FoodItem fi on fi.id = rfi.foodItemID where fi.name = ?",
                     stmt -> {
                         stmt.setString(1, ingredient);
                     }
                 );
 
-                for (Recipe recipe : recipes) {
-                    System.out.println(recipe.name + System.lineSeparator() + recipe.instructions);
-                }
+                System.out.println(getRecipeTable(recipes));
             }
         } catch (SQLException e) {
             System.out.println(e);
