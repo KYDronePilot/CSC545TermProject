@@ -28,8 +28,8 @@ public class ShoppingCli implements Callable<Integer> {
             );
         } catch (SQLException e) {
             e.printStackTrace();
+            return 1;
         }
-
         return 0;
     }
 }
