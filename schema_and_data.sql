@@ -115,7 +115,6 @@ insert into MealPlan (name, day) values ('Wednesday meals', 'wed');
 insert into MealPlan (name, day) values ('Thursday meals', 'thu');
 insert into MealPlan (name, day) values ('Friday meals', 'fri');
 insert into MealPlan (name, day) values ('Saturday meals', 'sat');
-insert into MealPlan (name, day) values ('Sunday meals', 'sun');
 
 -- Meal plan-recipe links
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 1, 'breakfast');
@@ -133,9 +132,6 @@ insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 4, 'dinner');
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 5, 'breakfast');
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 5, 'lunch');
 insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 5, 'dinner');
-insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (3, 6, 'breakfast');
-insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (1, 6, 'lunch');
-insert into RecipeMealPlan (recipeId, mealPlanId, meal) values (2, 6, 'dinner');
 
 -- Commit to DB
 commit;
