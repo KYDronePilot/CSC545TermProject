@@ -78,12 +78,12 @@ insert into NutritionFacts (calories, sugar, protein, sodium, fat) values (12, 0
 insert into NutritionFacts (calories, sugar, protein, sodium, fat) values (188, 0, 5, 891, 7);
 
 -- Sample food items
-insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Italian bread', 1, 'grain/beans', 0);
-insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Olive oil', 2, 'other', 0);
+insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Italian bread', 1, 'grain/beans', 15);
+insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Olive oil', 2, 'other', 10);
 insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Bread dip spices', 3, 'other', 0);
-insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Egg noodles', 4, 'grain/beans', 0);
+insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Egg noodles', 4, 'grain/beans', 2);
 insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Rotisserie chicken', 5, 'meat', 0);
-insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Chicken broth', 6, 'other', 0);
+insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Chicken broth', 6, 'other', 3);
 insert into FoodItem (name, nutritionFactsId, foodGroup, units) values ('Instant Ramen', 7, 'grain/beans', 0);
 
 -- Sample recipes
