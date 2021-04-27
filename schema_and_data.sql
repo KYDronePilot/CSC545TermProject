@@ -93,7 +93,7 @@ insert into Recipe (name, instructions, category) values ('Chicken noodle soup',
 - Heat chicken broth on burner
 - Add noodles and let cook for 5 minutes
 - Add chicken and wait 2 minutes
-- Serve', 'meat - chicken');
+- Serve', 'soups');
 insert into Recipe (name, instructions, category) values ('Ramen noodle soup', '- Heat water in microwave for 1.5 minutes
 - Add spice and noodles
 - Wait 5 minutes
