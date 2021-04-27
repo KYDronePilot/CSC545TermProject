@@ -269,14 +269,30 @@ class RecipeCli extends ModelCli {
             return 1;
         }
         try {
-            var recipes = Recipe.filter(
-                "select * from recipe where id=?",
-                stmt -> {
-                    stmt.setInt(1, 3);
+            //checks if category string from command is empty, if not, queries database for
+            //recipe with a matching category
+            if (category.isBlank() == false) {
+                var recipes = Recipe.filter(
+                    "select * from recipe where category=?",
+                    stmt -> {
+                        stmt.setString(1, category);
+                    }
+                );
+
+                for (Recipe recipe : recipes) {
+                    System.out.println(recipe.name + System.lineSeparator() + recipe.instructions);
                 }
-            );
-            for (Recipe recipe : recipes) {
-                System.out.println(recipe.name + System.lineSeparator() + recipe.instructions);
+            } else { //queries for recipe with matching matching ingredient name from the fooditem table
+                var recipes = Recipe.filter(
+                    "select r.* from recipe r join RecipeFoodItem rfi on r.id = rfi.recipeID join FoodItem fi on fi.id = rfi.foodItemID where fi.name = ?",
+                    stmt -> {
+                        stmt.setString(1, ingredient);
+                    }
+                );
+
+                for (Recipe recipe : recipes) {
+                    System.out.println(recipe.name + System.lineSeparator() + recipe.instructions);
+                }
             }
         } catch (SQLException e) {
             System.out.println(e);
