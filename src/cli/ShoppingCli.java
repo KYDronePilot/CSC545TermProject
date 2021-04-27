@@ -17,9 +17,9 @@ public class ShoppingCli implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        System.out.println("Here is your shopping list: ...");
+        System.out.println("Food needed this week that we don't have:");
         try {
-            var db = Database.getInstance();
+            Database db = Database.getInstance();
             db.select(
                 "SELECT distinct fooditem.name as name FROM fooditem INNER JOIN recipefooditem ON recipefooditem.fooditemid = fooditem.id INNER JOIN recipemealplan ON recipemealplan.recipeid = recipefooditem.recipeid WHERE fooditem.units = 0",
                 rs -> {
